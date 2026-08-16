@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "623139596699",
+    "project_id": "aqaro-app",
+    "storage_bucket": "aqaro-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623139596699:android:d9fa83efc020dc875e593e",
+        "android_client_info": {
+          "package_name": "com.aqaro.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMrDeoL2ynheTisOXX569csfLAToUY2ZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623139596699:android:1aa7a583b52bc6f75e593e",
+        "android_client_info": {
+          "package_name": "com.example.sakanApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMrDeoL2ynheTisOXX569csfLAToUY2ZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623139596699:android:9a53c0ce484898b55e593e",
+        "android_client_info": {
+          "package_name": "com.example.sakan_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMrDeoL2ynheTisOXX569csfLAToUY2ZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

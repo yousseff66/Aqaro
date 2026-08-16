@@ -1,0 +1,8 @@
+<svg width="900" height="240" viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0,10)">
+    <rect x="10" y="10" width="220" height="220" rx="44" fill="#C6FF3D"/>
+    <path d="M64 148 L120 92 L176 148 L158 148 L158 126 L82 126 L82 148 Z" fill="#1C1F1E"/>
+    <rect x="103" y="106" width="34" height="58" rx="4" fill="#F7F9F0"/>
+  </g>
+  <text x="270" y="150" font-family="Vazirmatn ExtraBold, Vazirmatn" font-weight="800" font-size="110" fill="#FFFFFF">Aqaro</text>
+</svg>
