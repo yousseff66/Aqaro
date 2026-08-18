@@ -1,12 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:sakan_app/core/api/dio_client.dart';
+
+// معالج الرسائل في الخلفية
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  debugPrint("Handling a background message: ${message.messageId}");
+}
 
 final pushNotificationServiceProvider = Provider((ref) => PushNotificationService(ref));
 
@@ -18,7 +26,10 @@ class PushNotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
-    // 1. Request Permission
+    // إعداد معالج الخلفية
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // طلب الإذن
     NotificationSettings settings = await _messaging.requestPermission(
       alert: true,
       badge: true,
@@ -27,7 +38,7 @@ class PushNotificationService {
 
     debugPrint('User granted permission: ${settings.authorizationStatus}');
 
-    // 2. Initialize Local Notifications for Foreground
+    // إعداد الإشعارات المحلية
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
@@ -39,22 +50,21 @@ class PushNotificationService {
     await _localNotifications.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (details) {
-        // Handle notification tap in foreground
         if (details.payload != null) {
           _handleNotificationClick(details.payload!);
         }
       },
     );
 
-    // 3. Register Token
+    // تسجيل الجهاز وجلب التوكن
     await registerDevice();
 
-    // 4. Listeners
+    // مستمع لتحديث التوكن
     FirebaseMessaging.instance.onTokenRefresh.listen((token) {
       registerDevice(token);
     });
 
-    // Foreground listener
+    // مستمع للرسائل أثناء فتح التطبيق
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Got a message whilst in the foreground!');
       if (message.notification != null) {
@@ -62,12 +72,12 @@ class PushNotificationService {
       }
     });
 
-    // Background/Terminated listeners
+    // مستمع للضغط على الإشعار والتطبيق في الخلفية
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleNotificationClickFromMessage(message);
     });
 
-    // Check if the app was opened from a terminated state
+    // التحقق إذا تم فتح التطبيق من إشعار وهو مغلق تماماً
     RemoteMessage? initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
       _handleNotificationClickFromMessage(initialMessage);
@@ -78,30 +88,25 @@ class PushNotificationService {
     try {
       token ??= await _messaging.getToken();
       if (token == null) {
-        debugPrint('FCM Token is null, skipping registration');
+        debugPrint('FCM Token is null');
         return;
       }
 
-      // اطبع التوكن عشان تقدر تجربه يدوياً من الـ Firebase Console
-      debugPrint('---------------- FCM TOKEN ----------------');
+      debugPrint('---------------- FCM TOKEN START ----------------');
       debugPrint(token);
-      debugPrint('-------------------------------------------');
+      debugPrint('---------------- FCM TOKEN END ------------------');
 
       final deviceId = await _getDeviceId();
       final platform = Platform.isAndroid ? 'android' : 'ios';
 
-      // بنحاول نبعت التوكن للسيرفر
-      // ملحوظة: لو اليوزر مش مسجل دخول، الـ Dio ممكن يرمي 401 Error
-      // لو السيرفر بيدعم تسجيل الضيوف، المفروض يشتغل
       await _ref.read(dioProvider).patch('/users/me/fcm-token', data: {
         'token': token,
         'platform': platform,
         'deviceId': deviceId,
       });
-      debugPrint('FCM Token registered successfully on Server');
+      debugPrint('FCM Token registered successfully');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
-      // حتى لو فشل التسجيل على سيرفرك، الإشعارات هتوصل لو بعت من Firebase Console
     }
   }
 
@@ -109,13 +114,9 @@ class PushNotificationService {
     try {
       String? token = await _messaging.getToken();
       if (token == null) return;
-
-      await _ref.read(dioProvider).delete('/users/me/fcm-token', data: {
-        'token': token,
-      });
-      debugPrint('FCM Token unregistered successfully');
+      await _ref.read(dioProvider).delete('/users/me/fcm-token', data: {'token': token});
     } catch (e) {
-      debugPrint('Failed to unregister FCM token: $e');
+      debugPrint('Failed to unregister: $e');
     }
   }
 
@@ -139,22 +140,12 @@ class PushNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
-      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'), // ده اللي هيخلي اللوجو الملون يظهر
-      color: Color(0xFFC6FF3D), // لون عقارو الفسفوري/الأخضر من اللوجو
-      enableLights: true,
-      showWhen: true,
-    );
-
-    const DarwinNotificationDetails iosPlatformChannelSpecifics =
-        DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
+      color: Color(0xFFC6FF3D),
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: iosPlatformChannelSpecifics,
+      iOS: DarwinNotificationDetails(),
     );
 
     await _localNotifications.show(
@@ -171,17 +162,6 @@ class PushNotificationService {
   }
 
   void _handleNotificationClick(String payload) {
-    try {
-      final Map<String, dynamic> data = jsonDecode(payload);
-      debugPrint('Notification clicked with data: $data');
-
-      final String? type = data['type'];
-      final String? id = data['id'];
-
-      // TODO: Handle navigation based on type and id
-      // Example: if (type == 'property') navigate to details(id)
-    } catch (e) {
-      debugPrint('Error parsing notification payload: $e');
-    }
+    debugPrint('Notification clicked: $payload');
   }
 }

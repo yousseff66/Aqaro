@@ -24,7 +24,7 @@ import 'package:sakan_app/features/payment/presentation/screens/payment_history_
 import 'package:sakan_app/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:sakan_app/core/providers/app_mode_provider.dart';
 import 'package:sakan_app/features/properties/presentation/screens/create_listing_screen.dart';
-
+import 'package:sakan_app/core/services/push_notification_service.dart';
 import 'package:sakan_app/features/admin/presentation/screens/payments_review_screen.dart';
 import 'package:sakan_app/features/admin/presentation/screens/reports_management_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,12 +37,18 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   GoogleFonts.config.allowRuntimeFetching = false;
 
+  final container = ProviderContainer(
+    overrides: [
+      storageServiceProvider.overrideWithValue(StorageService(prefs)),
+    ],
+  );
+
+  // تشغيل خدمة الإشعارات
+  await container.read(pushNotificationServiceProvider).initialize();
 
   runApp(
-    ProviderScope(
-      overrides: [
-        storageServiceProvider.overrideWithValue(StorageService(prefs)),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const SakanApp(),
     ),
   );
