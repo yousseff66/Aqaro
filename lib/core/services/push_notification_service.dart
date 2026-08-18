@@ -86,27 +86,57 @@ class PushNotificationService {
 
   Future<void> registerDevice([String? token]) async {
     try {
-      token ??= await _messaging.getToken();
-      if (token == null) {
-        debugPrint('FCM Token is null');
-        return;
+      String apnsStatus = 'unknown';
+      String permissionStatus = 'unknown';
+      String? apnsTokenHex;
+
+      // 1. فحص حالة الإذن الفعلية
+      NotificationSettings settings = await _messaging.getNotificationSettings();
+      permissionStatus = settings.authorizationStatus.toString();
+
+      if (Platform.isIOS) {
+        // 2. محاولة جلب توكن أبل (أساسي لعمل فايربيز على الآيفون)
+        String? apnsToken = await _messaging.getAPNSToken();
+        
+        if (apnsToken == null) {
+          apnsStatus = 'waiting_for_apple_apns';
+          // انتظر 5 ثواني وحاول تاني (أبل بتتأخر أحياناً في أول مرة)
+          await Future.delayed(const Duration(seconds: 5));
+          apnsToken = await _messaging.getAPNSToken();
+        }
+        
+        if (apnsToken != null) {
+          apnsStatus = 'ready';
+          // تحويل التوكن لـ Hex للتشخيص فقط (اختياري)
+          apnsTokenHex = apnsToken.toString(); 
+        } else {
+          apnsStatus = 'failed_no_apns_token_from_apple';
+        }
       }
 
-      debugPrint('---------------- FCM TOKEN START ----------------');
-      debugPrint(token);
-      debugPrint('---------------- FCM TOKEN END ------------------');
-
+      // 3. جلب توكن فايربيز
+      token ??= await _messaging.getToken();
+      
       final deviceId = await _getDeviceId();
       final platform = Platform.isAndroid ? 'android' : 'ios';
 
+      // 4. إرسال "تقرير التشخيص" للسيرفر
       await _ref.read(dioProvider).patch('/users/me/fcm-token', data: {
-        'token': token,
+        'token': token ?? 'no_fcm_token',
         'platform': platform,
         'deviceId': deviceId,
+        'meta': {
+          'apns_status': apnsStatus,
+          'permission_status': permissionStatus,
+          'has_apns_token': apnsTokenHex != null,
+          'debug_version': '1.0.0+17',
+          'device_time': DateTime.now().toIso8601String(),
+        }
       });
-      debugPrint('FCM Token registered successfully');
+      
+      debugPrint('Diagnostic report sent. APNS: $apnsStatus, Permission: $permissionStatus');
     } catch (e) {
-      debugPrint('Failed to register FCM token: $e');
+      debugPrint('Critical Error in registerDevice: $e');
     }
   }
 
