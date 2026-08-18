@@ -28,10 +28,23 @@
        <false/>
        <key>LSRequiresIPhoneOS</key>
        <true/>
-       <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-       <string>يحتاج التطبيق إلى الوصول لموقعك لعرض العقارات القريبة منك على الخريطة.</string>
+
+       <!-- صلاحيات الموقع (Location) -->
        <key>NSLocationWhenInUseUsageDescription</key>
-       <string>يحتاج التطبيق إلى الوصول لموقعك لعرض العقارات القريبة منك على الخريطة.</string>
+       <string>يحتاج عقارو الوصول إلى موقعك لعرض العقارات القريبة منك وتحديد موقع عقارك بدقة على الخريطة.</string>
+       <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل العثور على العقارات وتحديد المواقع بدقة.</string>
+       <key>NSLocationAlwaysUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل العثور على العقارات وتحديد المواقع بدقة.</string>
+
+       <!-- صلاحيات الميديا (Camera & Photos) -->
+       <key>NSCameraUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى الكاميرا لتصوير العقار وإضافة الصور مباشرة للإعلان.</string>
+       <key>NSPhotoLibraryUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى مكتبة الصور لاختيار صور العقار المحفوظة لديك.</string>
+       <key>NSMicrophoneUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى الميكروفون عند تسجيل فيديو للعقار.</string>
+
        <key>UIApplicationSceneManifest</key>
        <dict>
           <key>UIApplicationSupportsMultipleScenes</key>
@@ -62,24 +75,9 @@
        <key>UISupportedInterfaceOrientations</key>
        <array>
           <string>UIInterfaceOrientationPortrait</string>
-          <string>UIInterfaceOrientationLandscapeLeft</string>
-          <string>UIInterfaceOrientationLandscapeRight</string>
-       </array>
-       <key>UISupportedInterfaceOrientations~ipad</key>
-       <array>
-          <string>UIInterfaceOrientationPortrait</string>
-          <string>UIInterfaceOrientationPortraitUpsideDown</string>
-          <string>UIInterfaceOrientationLandscapeLeft</string>
-          <string>UIInterfaceOrientationLandscapeRight</string>
        </array>
        <key>UIStatusBarHidden</key>
        <false/>
-       <key>NSCameraUsageDescription</key>
-       <string>يحتاج التطبيق الوصول إلى الكاميرا لتصوير العقار وإضافة الصور للإعلان.</string>
-       <key>NSPhotoLibraryUsageDescription</key>
-       <string>يحتاج التطبيق الوصول إلى مكتبة الصور لاختيار صور العقار للإعلان.</string>
-       <key>NSMicrophoneUsageDescription</key>
-       <string>يحتاج التطبيق الوصول إلى الميكروفون عند تصوير فيديو للعقار.</string>
        <key>UIBackgroundModes</key>
        <array>
           <string>fetch</string>
