@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import FirebaseCore
+import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -8,12 +9,15 @@ import FirebaseCore
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // تهيئة خرائط جوجل - الـ Key ده هو اللي بيمنع كراش الخريطة في iOS
+    GMSServices.provideAPIKey("AIzaSyAL-3NyNo1yug-JncZQwLFuqPhOZYjK1-w")
+
     // تشغيل فايربيز أولاً بأمان
     if FirebaseApp.app() == nil {
         FirebaseApp.configure()
     }
 
-    // تسجيل الإشعارات في نظام苹果
+    // تسجيل الإشعارات
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }
