@@ -9,10 +9,10 @@ import GoogleMaps
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // تهيئة خرائط جوجل
+    // 1. تهيئة خرائط جوجل
     GMSServices.provideAPIKey("AIzaSyAL-3NyNo1yug-JncZQwLFuqPhOZYjK1-w")
 
-    // تشغيل فايربيز (نترك الباقي للمكتبة تلقائياً)
+    // 2. تهيئة فايربيز
     FirebaseApp.configure()
 
     GeneratedPluginRegistrant.register(with: self)
