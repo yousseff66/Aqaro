@@ -12,6 +12,12 @@ import FirebaseCore
     if FirebaseApp.app() == nil {
         FirebaseApp.configure()
     }
+
+    // تسجيل الإشعارات في نظام苹果
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+    }
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
