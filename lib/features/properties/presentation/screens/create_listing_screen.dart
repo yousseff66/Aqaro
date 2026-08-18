@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -725,27 +727,98 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   Text(context.translate('select_on_map')),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 300,
+                    height: 350, // زودنا الارتفاع شوية للتحكم الأفضل
                     child: Stack(
                       children: [
-                        GoogleMap(
-                          initialCameraPosition: CameraPosition(target: _selectedLocation, zoom: 12),
-                          onTap: _updateLocation,
-                          onMapCreated: (controller) => _mapController = controller,
-                          markers: {
-                            Marker(markerId: const MarkerId('selected'), position: _selectedLocation),
-                          },
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(target: _selectedLocation, zoom: 15),
+                            onMapCreated: (controller) => _mapController = controller,
+                            // السماح بحركات الخريطة حتى داخل الـ Stepper
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+                            },
+                            onCameraMove: (position) {
+                              _selectedLocation = position.target;
+                            },
+                            onCameraIdle: () {
+                              _updateLocation(_selectedLocation);
+                            },
+                            zoomControlsEnabled: false, // هنخليها false ونعمل زراير مخصصة أشيك
+                            zoomGesturesEnabled: true,
+                            myLocationButtonEnabled: false,
+                          ),
                         ),
+                        // الدبوس الثابت في منتصف الخريطة
+                        IgnorePointer(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 35), // لضبط سن الدبوس في المنتصف تماماً
+                              child: Icon(
+                                Icons.location_on,
+                                size: 45,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // زراير التحكم (الزوم والموقع الحالي)
                         Positioned(
-                          top: 16,
+                          bottom: 16,
                           right: 16,
-                          child: FloatingActionButton.small(
-                            onPressed: _getCurrentLocation,
-                            child: const Icon(Icons.my_location),
+                          child: Column(
+                            children: [
+                              FloatingActionButton.small(
+                                heroTag: 'zoom_in',
+                                onPressed: () => _mapController?.animateCamera(CameraUpdate.zoomIn()),
+                                backgroundColor: Colors.white,
+                                child: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                              ),
+                              const SizedBox(height: 8),
+                              FloatingActionButton.small(
+                                heroTag: 'zoom_out',
+                                onPressed: () => _mapController?.animateCamera(CameraUpdate.zoomOut()),
+                                backgroundColor: Colors.white,
+                                child: Icon(Icons.remove, color: Theme.of(context).primaryColor),
+                              ),
+                              const SizedBox(height: 8),
+                              FloatingActionButton.small(
+                                heroTag: 'current_loc',
+                                onPressed: _getCurrentLocation,
+                                backgroundColor: Colors.white,
+                                child: Icon(Icons.my_location, color: Theme.of(context).primaryColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // تنبيه للمستخدم
+                        Positioned(
+                          top: 10,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                context.translate('move_map_to_select') ?? 'حرك الخريطة لتحديد الموقع بدقة',
+                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    context.translate('location_hint') ?? 'اسحب الخريطة لجعل الدبوس فوق موقع عقارك تماماً',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

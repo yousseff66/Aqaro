@@ -47,10 +47,7 @@ class PushNotificationService {
     );
 
     // 3. Register Token
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      await registerDevice();
-    }
+    await registerDevice();
 
     // 4. Listeners
     FirebaseMessaging.instance.onTokenRefresh.listen((token) {
@@ -80,19 +77,31 @@ class PushNotificationService {
   Future<void> registerDevice([String? token]) async {
     try {
       token ??= await _messaging.getToken();
-      if (token == null) return;
+      if (token == null) {
+        debugPrint('FCM Token is null, skipping registration');
+        return;
+      }
+
+      // اطبع التوكن عشان تقدر تجربه يدوياً من الـ Firebase Console
+      debugPrint('---------------- FCM TOKEN ----------------');
+      debugPrint(token);
+      debugPrint('-------------------------------------------');
 
       final deviceId = await _getDeviceId();
       final platform = Platform.isAndroid ? 'android' : 'ios';
 
+      // بنحاول نبعت التوكن للسيرفر
+      // ملحوظة: لو اليوزر مش مسجل دخول، الـ Dio ممكن يرمي 401 Error
+      // لو السيرفر بيدعم تسجيل الضيوف، المفروض يشتغل
       await _ref.read(dioProvider).patch('/users/me/fcm-token', data: {
         'token': token,
         'platform': platform,
         'deviceId': deviceId,
       });
-      debugPrint('FCM Token registered successfully');
+      debugPrint('FCM Token registered successfully on Server');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
+      // حتى لو فشل التسجيل على سيرفرك، الإشعارات هتوصل لو بعت من Firebase Console
     }
   }
 

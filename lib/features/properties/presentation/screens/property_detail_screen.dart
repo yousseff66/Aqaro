@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
 import 'package:sakan_app/features/properties/presentation/providers/property_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,30 +83,98 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                         PageView.builder(
                           controller: _pageController,
                           itemCount: property.images.length,
+                          physics: const BouncingScrollPhysics(),
                           onPageChanged: (index) {
                             setState(() => _currentIndex = index);
                           },
                           itemBuilder: (context, index) {
-                            return Image.network(
-                              property.images[index],
-                              fit: BoxFit.cover,
+                            return GestureDetector(
+                              onTap: () => _showFullScreenImages(context, property.images, index),
+                              child: Hero(
+                                tag: 'property_image_$index',
+                                child: Image.network(
+                                  property.images[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             );
                           },
                         ),
+                        // أسهم التنقل (لسهولة الاستخدام)
+                        if (property.images.length > 1) ...[
+                          Positioned(
+                            left: 8,
+                            top: 0,
+                            bottom: 0,
+                            width: 48,
+                            child: Center(
+                              child: IconButton(
+                                icon: const CircleAvatar(
+                                  backgroundColor: Colors.black26,
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Icon(
+                                      Icons.arrow_back_ios_new,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (AppFormatters.isRTL(context)) {
+                                    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                  } else {
+                                    _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 8,
+                            top: 0,
+                            bottom: 0,
+                            width: 48,
+                            child: Center(
+                              child: IconButton(
+                                icon: const CircleAvatar(
+                                  backgroundColor: Colors.black26,
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (AppFormatters.isRTL(context)) {
+                                    _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                  } else {
+                                    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                         // تدرج ظلي خلفي عشان الأيقونات والـ Dots تبان بوضوح
                         Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.3),
-                                  Colors.transparent,
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.5),
-                                ],
-                                stops: const [0.0, 0.2, 0.8, 1.0],
+                          child: IgnorePointer(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withOpacity(0.3),
+                                    Colors.transparent,
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.5),
+                                  ],
+                                  stops: const [0.0, 0.2, 0.8, 1.0],
+                                ),
                               ),
                             ),
                           ),
@@ -117,20 +185,22 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                             bottom: 20,
                             left: 0,
                             right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                property.images.length,
-                                (index) => AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                                  height: 6,
-                                  width: _currentIndex == index ? 20 : 6,
-                                  decoration: BoxDecoration(
-                                    color: _currentIndex == index 
-                                        ? AppColors.lime500 
-                                        : Colors.white.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(10),
+                            child: IgnorePointer(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  property.images.length,
+                                  (index) => AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                                    height: 6,
+                                    width: _currentIndex == index ? 20 : 6,
+                                    decoration: BoxDecoration(
+                                      color: _currentIndex == index 
+                                          ? AppColors.lime500 
+                                          : Colors.white.withOpacity(0.6),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -404,6 +474,69 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
+  }
+
+  void _showFullScreenImages(BuildContext context, List<String> images, int initialIndex) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _FullScreenGallery(images: images, initialIndex: initialIndex),
+      ),
+    );
+  }
+}
+
+class _FullScreenGallery extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _FullScreenGallery({required this.images, required this.initialIndex});
+
+  @override
+  State<_FullScreenGallery> createState() => _FullScreenGalleryState();
+}
+
+class _FullScreenGalleryState extends State<_FullScreenGallery> {
+  late PageController _controller;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _controller = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('${_currentIndex + 1} / ${widget.images.length}', style: const TextStyle(color: Colors.white)),
+      ),
+      body: PageView.builder(
+        controller: _controller,
+        itemCount: widget.images.length,
+        onPageChanged: (index) => setState(() => _currentIndex = index),
+        itemBuilder: (context, index) {
+          return InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Center(
+              child: Hero(
+                tag: 'property_image_$index',
+                child: Image.network(
+                  widget.images[index],
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
