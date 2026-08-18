@@ -37,18 +37,11 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  final container = ProviderContainer(
-    overrides: [
-      storageServiceProvider.overrideWithValue(StorageService(prefs)),
-    ],
-  );
-
-  // تشغيل خدمة الإشعارات
-  await container.read(pushNotificationServiceProvider).initialize();
-
   runApp(
-    UncontrolledProviderScope(
-      container: container,
+    ProviderScope(
+      overrides: [
+        storageServiceProvider.overrideWithValue(StorageService(prefs)),
+      ],
       child: const SakanApp(),
     ),
   );
@@ -93,11 +86,25 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
-class SakanApp extends ConsumerWidget {
+class SakanApp extends ConsumerStatefulWidget {
   const SakanApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SakanApp> createState() => _SakanAppState();
+}
+
+class _SakanAppState extends ConsumerState<SakanApp> {
+  @override
+  void initState() {
+    super.initState();
+    // تهيئة الإشعارات بعد أول Frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(pushNotificationServiceProvider).initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);
     final authState = ref.watch(authProvider);
