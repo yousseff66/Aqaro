@@ -86,27 +86,37 @@ class PushNotificationService {
 
   Future<void> registerDevice([String? token]) async {
     try {
+      // محاولة الحصول على APNs Token أولاً للـ iOS
+      if (Platform.isIOS) {
+        int retryCount = 0;
+        String? apnsToken;
+        while (retryCount < 5 && apnsToken == null) {
+          apnsToken = await _messaging.getAPNSToken();
+          if (apnsToken == null) {
+            await Future.delayed(const Duration(seconds: 2));
+            retryCount++;
+            debugPrint('Retrying APNS Token... attempt $retryCount');
+          }
+        }
+      }
+
       token ??= await _messaging.getToken();
       if (token == null) {
         debugPrint('FCM Token is null');
         return;
       }
 
-      // تشخيصات إضافية للـ iOS
+      // تشخيصات دقيقة
       Map<String, dynamic> meta = {
-        'build': '1.0.0+20',
+        'build': '1.0.0+21',
         'timestamp': DateTime.now().toIso8601String(),
       };
 
       if (Platform.isIOS) {
-        final apnsToken = await _messaging.getAPNSToken();
-        meta['apns_status'] = apnsToken != null ? 'ready' : 'failed_no_apns_token';
-        meta['has_apns_token'] = apnsToken != null;
-        
-        // محاولة الحصول على التوكن الأصلي للـ APNs كـ Hex (للتحقق اليدوي)
-        if (apnsToken != null) {
-          debugPrint('APNS Token Found: $apnsToken');
-        }
+        final apns = await _messaging.getAPNSToken();
+        meta['apns_status'] = apns != null ? 'ready' : 'failed_no_apns_token_from_apple';
+        meta['has_apns_token'] = apns != null;
+        debugPrint('Final APNS Status for registration: ${meta['apns_status']}');
       }
 
       final settings = await _messaging.getNotificationSettings();
