@@ -94,7 +94,11 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   }
 
   Future<void> _pickImages() async {
-    final List<XFile> pickedFiles = await _picker.pickMultiImage();
+    final List<XFile> pickedFiles = await _picker.pickMultiImage(
+      imageQuality: 70, // ضغط الصورة لـ 70% من جودتها الأصلية
+      maxWidth: 1440,   // أقصى عرض 1440 بكسل (كافي جداً للموبايل)
+      maxHeight: 1440,  // أقصى ارتفاع 1440 بكسل
+    );
     if (pickedFiles.isNotEmpty) {
       setState(() {
         _images.addAll(pickedFiles.map((file) => File(file.path)));
