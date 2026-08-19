@@ -108,7 +108,7 @@ class PushNotificationService {
 
       // تشخيصات دقيقة
       Map<String, dynamic> meta = {
-        'build': '1.0.0+21',
+        'build': '1.0.0+20',
         'timestamp': DateTime.now().toIso8601String(),
       };
 
