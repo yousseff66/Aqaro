@@ -29,6 +29,7 @@ import 'package:sakan_app/features/admin/presentation/screens/payments_review_sc
 import 'package:sakan_app/features/admin/presentation/screens/reports_management_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -109,10 +110,9 @@ class _SakanAppState extends ConsumerState<SakanApp> {
     final locale = ref.watch(localeProvider);
     final authState = ref.watch(authProvider);
 
-
-
     return MaterialApp(
       title: 'Aqaro',
+      scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       themeMode: themeMode,

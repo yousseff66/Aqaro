@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:sakan_app/core/api/dio_client.dart';
+import 'package:sakan_app/main.dart';
 
 // معالج الرسائل في الخلفية
 @pragma('vm:entry-point')
@@ -24,6 +25,22 @@ class PushNotificationService {
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+
+  void _showDiagnosticSnackBar(String message, {bool isError = false}) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 15),
+        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
 
   Future<void> initialize() async {
     // إعداد معالج الخلفية
@@ -117,6 +134,12 @@ class PushNotificationService {
         meta['apns_status'] = apns != null ? 'ready' : 'failed_no_apns_token_from_apple';
         meta['has_apns_token'] = apns != null;
         debugPrint('🚀🚀🚀 [DIAGNOSTIC] Final APNS Status: ${meta['apns_status']} 🚀🚀🚀');
+        
+        _showDiagnosticSnackBar(
+          apns != null ? '✅ APNs Ready' : '❌ APNs Failed (Check Certs)',
+          isError: apns == null,
+        );
+
         if (apns == null) {
           debugPrint('❌❌❌ [DIAGNOSTIC] REASON: Apple did not provide an APNs token. Check Certificates! ❌❌❌');
         }
@@ -125,6 +148,10 @@ class PushNotificationService {
       final settings = await _messaging.getNotificationSettings();
       meta['permission_status'] = settings.authorizationStatus.toString();
       debugPrint('🔔🔔🔔 [DIAGNOSTIC] Permission Status: ${meta['permission_status']} 🔔🔔🔔');
+      
+      if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+        _showDiagnosticSnackBar('🔔 Permission: ${settings.authorizationStatus.name}', isError: true);
+      }
 
       debugPrint('---------------- FCM TOKEN START ----------------');
       debugPrint(token);
