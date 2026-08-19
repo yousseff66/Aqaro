@@ -39,13 +39,11 @@ import GoogleMaps
   // ربط توكن آبل بفايربيز
   override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     Messaging.messaging().apnsToken = deviceToken
-    let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-    print("SUCCESS: Registered for remote notifications with device token: \(tokenString)")
     super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
 
   override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    print("CRITICAL ERROR: Failed to register for remote notifications: \(error.localizedDescription)")
+    print("Failed to register for remote notifications: \(error.localizedDescription)")
     super.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
   }
 
