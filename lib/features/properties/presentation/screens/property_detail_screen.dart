@@ -4,6 +4,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
 import 'package:sakan_app/features/properties/presentation/providers/property_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sakan_app/core/localization/app_localizations.dart';
 import 'package:sakan_app/core/theme/app_colors.dart';
@@ -234,7 +235,13 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
               ),
               IconButton(
                 icon: const Icon(Icons.share),
-                onPressed: () {},
+                onPressed: () {
+                  final String text = '${property.title}\n'
+                      '${AppFormatters.formatCurrency(property.price)} ${context.translate('egp')}\n'
+                      '${property.city}, ${property.governorate}\n'
+                      'https://aqaroeg.com/property/${property.id}';
+                  Share.share(text);
+                },
               ),
               PopupMenuButton<String>(
                 onSelected: (value) {
@@ -391,37 +398,71 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                       ),
                     )
                   else
-                    SizedBox(
-                      height: 200,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
-                            zoom: 14,
+                    GestureDetector(
+                      onTap: () => _openInMaps(property.location.coordinates[1], property.location.coordinates[0]),
+                      child: SizedBox(
+                        height: 200,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Stack(
+                            children: [
+                              GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
+                                  zoom: 14,
+                                ),
+                                markers: property.showExactLocation
+                                    ? {
+                                        Marker(
+                                          markerId: const MarkerId('property'),
+                                          position: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
+                                        )
+                                      }
+                                    : {},
+                                circles: !property.showExactLocation
+                                    ? {
+                                        Circle(
+                                          circleId: const CircleId('area'),
+                                          center: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
+                                          radius: 500,
+                                          fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                                          strokeWidth: 2,
+                                          strokeColor: Theme.of(context).colorScheme.secondary,
+                                        )
+                                      }
+                                    : {},
+                                scrollGesturesEnabled: false,
+                                zoomGesturesEnabled: false,
+                                rotateGesturesEnabled: false,
+                                tiltGesturesEnabled: false,
+                                myLocationButtonEnabled: false,
+                              ),
+                              // Overlay to ensure tap is captured even if map absorbs it
+                              Container(color: Colors.transparent),
+                              Positioned(
+                                bottom: 8,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.open_in_new, color: Colors.white, size: 12),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        context.translate('open_in_maps') ?? 'Open in Maps',
+                                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          markers: property.showExactLocation
-                              ? {
-                                  Marker(
-                                    markerId: const MarkerId('property'),
-                                    position: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
-                                  )
-                                }
-                              : {},
-                          circles: !property.showExactLocation
-                              ? {
-                                  Circle(
-                                    circleId: const CircleId('area'),
-                                    center: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
-                                    radius: 500,
-                                    fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                                    strokeWidth: 2,
-                                    strokeColor: Theme.of(context).colorScheme.secondary,
-                                  )
-                                }
-                              : {},
-                          scrollGesturesEnabled: false,
-                          zoomGesturesEnabled: false,
                         ),
                       ),
                     ),
@@ -471,6 +512,13 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
   void _launchWhatsApp(String? phone) async {
     if (phone == null) return;
     final url = 'https://wa.me/$phone';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    }
+  }
+
+  void _openInMaps(double lat, double lng) async {
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
