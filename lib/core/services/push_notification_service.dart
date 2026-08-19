@@ -173,8 +173,10 @@ class PushNotificationService {
         'deviceId': deviceId,
       });
       debugPrint('FCM Token registered successfully');
+      _showDiagnosticSnackBar('🚀 Server Registered ✅');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
+      _showDiagnosticSnackBar('❌ Server Registration Failed: $e', isError: true);
     }
   }
 
