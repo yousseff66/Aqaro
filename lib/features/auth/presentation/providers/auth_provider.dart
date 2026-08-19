@@ -66,6 +66,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           isLoading: false,
           isAuthenticated: true,
           user: user,
+          isGuest: false,
         );
         // Initialize notifications on auto-login
         _ref.read(pushNotificationServiceProvider).initialize();
@@ -100,6 +101,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       isLoading: false,
       isAuthenticated: true,
       user: user,
+      isGuest: false,
     );
 
     // Initialize notifications after successful auth
