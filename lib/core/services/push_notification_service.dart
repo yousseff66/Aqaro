@@ -89,6 +89,13 @@ class PushNotificationService {
       }
     });
 
+    // إضافة هذا السطر للآيفون لإظهار الإشعارات والتطبيق مفتوح
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
     // مستمع للضغط على الإشعار والتطبيق في الخلفية
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleNotificationClickFromMessage(message);
