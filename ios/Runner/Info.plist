@@ -87,5 +87,15 @@
        </array>
        <key>FirebaseAppDelegateProxyEnabled</key>
        <true/>
+       <key>LSApplicationQueriesSchemes</key>
+       <array>
+          <string>https</string>
+          <string>http</string>
+          <string>tel</string>
+          <string>mailto</string>
+          <string>whatsapp</string>
+          <string>googlechromes</string>
+          <string>comgooglemaps</string>
+       </array>
     </dict>
 </plist>
