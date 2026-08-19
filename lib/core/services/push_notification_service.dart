@@ -116,11 +116,15 @@ class PushNotificationService {
         final apns = await _messaging.getAPNSToken();
         meta['apns_status'] = apns != null ? 'ready' : 'failed_no_apns_token_from_apple';
         meta['has_apns_token'] = apns != null;
-        debugPrint('Final APNS Status for registration: ${meta['apns_status']}');
+        debugPrint('🚀🚀🚀 [DIAGNOSTIC] Final APNS Status: ${meta['apns_status']} 🚀🚀🚀');
+        if (apns == null) {
+          debugPrint('❌❌❌ [DIAGNOSTIC] REASON: Apple did not provide an APNs token. Check Certificates! ❌❌❌');
+        }
       }
 
       final settings = await _messaging.getNotificationSettings();
       meta['permission_status'] = settings.authorizationStatus.toString();
+      debugPrint('🔔🔔🔔 [DIAGNOSTIC] Permission Status: ${meta['permission_status']} 🔔🔔🔔');
 
       debugPrint('---------------- FCM TOKEN START ----------------');
       debugPrint(token);
