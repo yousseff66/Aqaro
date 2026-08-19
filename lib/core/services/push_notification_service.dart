@@ -92,6 +92,26 @@ class PushNotificationService {
         return;
       }
 
+      // تشخيصات إضافية للـ iOS
+      Map<String, dynamic> meta = {
+        'build': '1.0.0+20',
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      if (Platform.isIOS) {
+        final apnsToken = await _messaging.getAPNSToken();
+        meta['apns_status'] = apnsToken != null ? 'ready' : 'failed_no_apns_token';
+        meta['has_apns_token'] = apnsToken != null;
+        
+        // محاولة الحصول على التوكن الأصلي للـ APNs كـ Hex (للتحقق اليدوي)
+        if (apnsToken != null) {
+          debugPrint('APNS Token Found: $apnsToken');
+        }
+      }
+
+      final settings = await _messaging.getNotificationSettings();
+      meta['permission_status'] = settings.authorizationStatus.toString();
+
       debugPrint('---------------- FCM TOKEN START ----------------');
       debugPrint(token);
       debugPrint('---------------- FCM TOKEN END ------------------');
@@ -103,8 +123,9 @@ class PushNotificationService {
         'token': token,
         'platform': platform,
         'deviceId': deviceId,
+        'meta': meta, // نرسل البيانات التشخيصية للباك-إند
       });
-      debugPrint('FCM Token registered successfully');
+      debugPrint('FCM Token registered successfully with diagnostics');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
     }
