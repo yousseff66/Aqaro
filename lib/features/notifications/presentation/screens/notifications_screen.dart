@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:sakan_app/core/localization/app_localizations.dart';
+import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:sakan_app/features/notifications/data/models/notification_model.dart';
 import 'package:sakan_app/features/notifications/presentation/providers/notification_provider.dart';
 import 'package:sakan_app/features/properties/presentation/screens/property_detail_screen.dart';
+import 'package:sakan_app/shared/widgets/guest_prompt_card.dart';
 
 import 'package:sakan_app/shared/widgets/mode_toggle_appbar.dart';
 
@@ -83,6 +85,25 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
+    if (authState.isGuest) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            context.translate('notifications'),
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
+        ),
+        body: const Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Center(
+            child: GuestPromptCard(),
+          ),
+        ),
+      );
+    }
+
     final notificationsAsync = ref.watch(myNotificationsProvider);
 
     return Scaffold(
