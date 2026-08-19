@@ -133,9 +133,8 @@ class PushNotificationService {
         'token': token,
         'platform': platform,
         'deviceId': deviceId,
-        'meta': meta, // نرسل البيانات التشخيصية للباك-إند
       });
-      debugPrint('FCM Token registered successfully with diagnostics');
+      debugPrint('FCM Token registered successfully');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
     }
