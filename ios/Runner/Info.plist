@@ -29,21 +29,15 @@
        <key>LSRequiresIPhoneOS</key>
        <true/>
 
-       <!-- صلاحيات الموقع (Location) -->
+       <!-- صلاحية الموقع (Location) -->
        <key>NSLocationWhenInUseUsageDescription</key>
-       <string>يحتاج عقارو الوصول إلى موقعك لعرض العقارات القريبة منك وتحديد موقع عقارك بدقة على الخريطة.</string>
-       <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل العثور على العقارات وتحديد المواقع بدقة.</string>
-       <key>NSLocationAlwaysUsageDescription</key>
-       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل العثور على العقارات وتحديد المواقع بدقة.</string>
+       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل تحديد موقع العقار عند الإضافة، وعرض موقعه عند التصفح.</string>
 
        <!-- صلاحيات الميديا (Camera & Photos) -->
        <key>NSCameraUsageDescription</key>
        <string>يحتاج عقارو الوصول إلى الكاميرا لتصوير العقار وإضافة الصور مباشرة للإعلان.</string>
        <key>NSPhotoLibraryUsageDescription</key>
        <string>يحتاج عقارو الوصول إلى مكتبة الصور لاختيار صور العقار المحفوظة لديك.</string>
-       <key>NSMicrophoneUsageDescription</key>
-       <string>يحتاج عقارو الوصول إلى الميكروفون عند تسجيل فيديو للعقار.</string>
 
        <key>UIApplicationSceneManifest</key>
        <dict>
