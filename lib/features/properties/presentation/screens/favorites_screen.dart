@@ -17,7 +17,7 @@ class FavoritesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
 
-    if (authState.isGuest) {
+    if (authState.isGuest || !authState.isAuthenticated) {
       return Scaffold(
         appBar: ModeToggleAppBar(
           title: context.translate('my_favorites'),

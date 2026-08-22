@@ -183,8 +183,11 @@ class ProfileScreen extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(context.translate('account_deleted') ?? 'Account deleted')),
                   );
-                  // الرجوع للهوم بعد المسح
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  // التوجيه لشاشة تسجيل الدخول بعد المسح
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => LoginScreen()),
+                    (route) => false,
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(result['message'] ?? 'Error')),
