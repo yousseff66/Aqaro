@@ -165,8 +165,6 @@ class ProfileScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context); // إغلاق الديالوج
-              
               // إظهار Loading
               showDialog(
                 context: context,
@@ -178,6 +176,7 @@ class ProfileScreen extends ConsumerWidget {
               
               if (context.mounted) {
                 Navigator.pop(context); // إغلاق الـ Loading
+                Navigator.pop(context); // إغلاق ديالوج التأكيد
                 
                 if (result['success'] == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -185,7 +184,7 @@ class ProfileScreen extends ConsumerWidget {
                   );
                   // التوجيه لشاشة تسجيل الدخول بعد المسح
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => LoginScreen()),
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
                     (route) => false,
                   );
                 } else {

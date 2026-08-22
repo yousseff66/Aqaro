@@ -1,8 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/features/favorites/data/repositories/favorite_repository.dart';
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
+import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dart';
 
 final favoritesListProvider = FutureProvider<List<Property>>((ref) async {
+  final authState = ref.watch(authProvider);
+  if (!authState.isAuthenticated) {
+    return [];
+  }
   return ref.read(favoriteRepositoryProvider).getMyFavorites();
 });
 
