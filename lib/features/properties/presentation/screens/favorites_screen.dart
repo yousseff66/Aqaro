@@ -16,7 +16,7 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    
+
     if (authState.isGuest) {
       return Scaffold(
         appBar: ModeToggleAppBar(
@@ -64,17 +64,18 @@ class FavoritesScreen extends ConsumerWidget {
               itemCount: properties.length,
               itemBuilder: (context, index) {
                 final property = properties[index];
+                if (property.id == null) {
+                  return const SizedBox.shrink();
+                }
                 return PropertyCard(
                   property: property,
                   onTap: () {
-                    if (property.id != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PropertyDetailScreen(propertyId: property.id!),
-                        ),
-                      );
-                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PropertyDetailScreen(propertyId: property.id!),
+                      ),
+                    );
                   },
                 );
               },

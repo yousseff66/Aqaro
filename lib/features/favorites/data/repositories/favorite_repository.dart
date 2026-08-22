@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
@@ -21,10 +22,19 @@ class FavoriteRepository {
   Future<List<Property>> getMyFavorites() async {
     final response = await _dio.get(ApiConstants.favorites);
     final data = response.data;
-    if (data is List) {
-      return data.map((json) => Property.fromJson(json)).toList();
+    if (data is! List) return [];
+
+    final properties = <Property>[];
+    for (final json in data) {
+      try {
+        if (json == null) continue;
+        properties.add(Property.fromJson(json));
+      } catch (e) {
+        debugPrint('Skipping malformed favorite item: $e');
+        continue;
+      }
     }
-    return [];
+    return properties;
   }
 
   Future<int> getFavoritesCount() async {

@@ -282,5 +282,9 @@
   "review_submitted_success": "تم تقديم التقييم بنجاح",
   "attach_receipt": "إرفاق إيصال الدفع",
   "add_receipt_image": "إضافة صورة الإيصال",
+  "delete_account": "حذف الحساب",
+  "delete_account_title": "حذف الحساب نهائياً",
+  "delete_account_confirmation": "هل أنت متأكد من رغبتك في حذف حسابك؟ سيؤدي ذلك إلى حذف جميع عقاراتك، بياناتك، ومدفوعاتك نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+  "account_deleted": "تم حذف الحساب بنجاح",
   "send_notification": "إرسال إشعار"
 }

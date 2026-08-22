@@ -32,6 +32,8 @@
        <!-- صلاحية الموقع (Location) -->
        <key>NSLocationWhenInUseUsageDescription</key>
        <string>يحتاج عقارو الوصول إلى موقعك لتسهيل تحديد موقع العقار عند الإضافة، وعرض موقعه عند التصفح.</string>
+       <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+       <string>يحتاج عقارو الوصول إلى موقعك لتسهيل تحديد موقع العقار عند الإضافة، وعرض موقعه عند التصفح.</string>
 
        <!-- صلاحيات الميديا (Camera & Photos) -->
        <key>NSCameraUsageDescription</key>

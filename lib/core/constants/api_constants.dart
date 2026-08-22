@@ -8,6 +8,7 @@ class ApiConstants {
   static const String forgotPassword = '/auth/forgot-password';
   static const String resetPassword = '/auth/reset-password';
   static const String updatePhone = '/users/me/phone';
+  static const String deleteAccount = '/users/me';
 
   // Properties
   static const String properties = '/properties';

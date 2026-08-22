@@ -211,4 +211,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return {'success': false, 'message': 'An unexpected error occurred'};
     }
   }
+
+  Future<Map<String, dynamic>> deleteAccount() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _ref.read(dioProvider).delete(ApiConstants.deleteAccount);
+      
+      // Logout locally
+      await _ref.read(storageServiceProvider).removeToken();
+      state = AuthState(isAuthenticated: false, user: null, isLoading: false);
+      
+      return {'success': true};
+    } on DioException catch (e) {
+      state = state.copyWith(isLoading: false);
+      return {'success': false, 'message': e.response?.data['message'] ?? 'Failed to delete account'};
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+      return {'success': false, 'message': 'An unexpected error occurred'};
+    }
+  }
 }

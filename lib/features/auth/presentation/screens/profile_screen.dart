@@ -131,8 +131,71 @@ class ProfileScreen extends ConsumerWidget {
                   },
                 ),
               ),
+            if (authState.isAuthenticated) ...[
+              const SizedBox(height: 16),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.delete_forever, color: Colors.grey),
+                  title: Text(
+                    context.translate('delete_account'),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  onTap: () => _showDeleteAccountDialog(context, ref),
+                ),
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.translate('delete_account_title') ?? 'Delete Account'),
+        content: Text(context.translate('delete_account_confirmation') ?? 'Are you sure you want to delete your account?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.translate('cancel') ?? 'Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // إغلاق الديالوج
+              
+              // إظهار Loading
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(child: CircularProgressIndicator()),
+              );
+
+              final result = await ref.read(authProvider.notifier).deleteAccount();
+              
+              if (context.mounted) {
+                Navigator.pop(context); // إغلاق الـ Loading
+                
+                if (result['success'] == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(context.translate('account_deleted') ?? 'Account deleted')),
+                  );
+                  // الرجوع للهوم بعد المسح
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result['message'] ?? 'Error')),
+                  );
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(context.translate('delete') ?? 'Delete'),
+          ),
+        ],
       ),
     );
   }

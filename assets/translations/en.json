@@ -277,5 +277,9 @@
   "review_submitted_success": "Review submitted successfully",
   "attach_receipt": "Attach Payment Receipt",
   "add_receipt_image": "Add Receipt Image",
+  "delete_account": "Delete Account",
+  "delete_account_title": "Delete Account Permanently",
+  "delete_account_confirmation": "Are you sure you want to delete your account? This will permanently delete all your listings, data, and payments. This action cannot be undone.",
+  "account_deleted": "Account deleted successfully",
   "send_notification": "Send Notification"
 }
