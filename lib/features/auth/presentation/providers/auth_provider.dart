@@ -72,20 +72,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         _ref.read(pushNotificationServiceProvider).initialize();
       } catch (e) {
         await _ref.read(storageServiceProvider).removeToken();
-        state = state.copyWith(
-          isLoading: false,
-          isAuthenticated: false,
-          isGuest: true,
-          user: null,
-        );
+        state = state.copyWith(isLoading: false, isAuthenticated: false, user: null);
       }
     } else {
-      state = state.copyWith(
-        isLoading: false,
-        isAuthenticated: false,
-        isGuest: true,
-        user: null,
-      );
+      state = state.copyWith(isLoading: false, isAuthenticated: false, user: null);
     }
   }
 
@@ -122,9 +112,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final response = await _ref.read(dioProvider).post(
-        ApiConstants.login,
-        data: {'email': email, 'password': password},
-      );
+            ApiConstants.login,
+            data: {'email': email, 'password': password},
+          );
 
       await _handleAuthResponse(response.data);
     } on DioException catch (e) {
@@ -144,14 +134,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final response = await _ref.read(dioProvider).post(
-        ApiConstants.register,
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-          'phone': phone,
-        },
-      );
+            ApiConstants.register,
+            data: {
+              'name': name,
+              'email': email,
+              'password': password,
+              'phone': phone,
+            },
+          );
 
       await _handleAuthResponse(response.data);
     } on DioException catch (e) {
@@ -169,7 +159,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     // 1. تحديث الحالة فوراً ليتم التوجيه لشاشة تسجيل الدخول دون تأخير
-    state = AuthState(isAuthenticated: false, isGuest: true, user: null, isLoading: false);
+    state = AuthState(isAuthenticated: false, user: null, isLoading: false);
 
     // 2. مسح التوكن محلياً
     await _ref.read(storageServiceProvider).removeToken();
@@ -226,11 +216,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _ref.read(dioProvider).delete(ApiConstants.deleteAccount);
-
+      
       // Logout locally
       await _ref.read(storageServiceProvider).removeToken();
-      state = AuthState(isAuthenticated: false, isGuest: true, user: null, isLoading: false);
-
+      state = AuthState(isAuthenticated: false, user: null, isLoading: false);
+      
       return {'success': true};
     } on DioException catch (e) {
       state = state.copyWith(isLoading: false);

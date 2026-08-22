@@ -9,7 +9,6 @@ import 'package:sakan_app/features/properties/presentation/screens/property_deta
 import 'package:sakan_app/shared/widgets/mode_toggle_appbar.dart';
 
 import 'package:sakan_app/shared/widgets/guest_prompt_card.dart';
-import 'package:dio/dio.dart';
 
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
@@ -18,7 +17,7 @@ class FavoritesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
 
-    if (!authState.isAuthenticated) {
+    if (authState.isGuest) {
       return Scaffold(
         appBar: ModeToggleAppBar(
           title: context.translate('my_favorites'),
@@ -83,38 +82,19 @@ class FavoritesScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, stack) {
-            final isAuthError = e is DioException && e.response?.statusCode == 401;
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      isAuthError
-                          ? (context.translate('session_expired') ?? 'انتهت صلاحية الجلسة، برجاء تسجيل الدخول مرة أخرى')
-                          : (context.translate('something_went_wrong') ?? 'حدث خطأ ما، حاول مرة أخرى'),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (isAuthError) {
-                        ref.read(authProvider.notifier).logout();
-                      } else {
-                        ref.invalidate(favoritesListProvider);
-                      }
-                    },
-                    child: Text(
-                      isAuthError ? (context.translate('login') ?? 'تسجيل الدخول') : 'Retry',
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+          error: (e, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Error: $e'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(favoritesListProvider),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
