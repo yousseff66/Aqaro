@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/core/localization/app_localizations.dart';
 import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/main.dart';
 
 import 'package:sakan_app/shared/widgets/mode_toggle_appbar.dart';
@@ -94,6 +95,12 @@ class ProfileScreen extends ConsumerWidget {
                         MaterialPageRoute(builder: (context) => const AboutScreen()),
                       );
                     },
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.support_agent),
+                    title: Text(context.translate('contact_support') ?? 'تواصل مع الدعم الفني'),
+                    onTap: () => _showContactSupportDialog(context, ref),
                   ),
                 ],
               ),
@@ -244,6 +251,94 @@ class ProfileScreen extends ConsumerWidget {
             child: Text(context.translate('save')),
           ),
         ],
+      ),
+    );
+  }
+  void _showContactSupportDialog(BuildContext context, WidgetRef ref) {
+    final subjectController = TextEditingController();
+    final messageController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text(context.translate('contact_support') ?? 'تواصل مع الدعم الفني'),
+            content: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: subjectController,
+                      decoration: InputDecoration(
+                        labelText: context.translate('subject') ?? 'الموضوع',
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (v) => v!.isEmpty ? context.translate('required') ?? 'مطلوب' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        labelText: context.translate('message') ?? 'الرسالة',
+                        border: const OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                      validator: (v) => v!.isEmpty ? context.translate('required') ?? 'مطلوب' : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: isLoading ? null : () => Navigator.pop(context),
+                child: Text(context.translate('cancel') ?? 'إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        if (formKey.currentState!.validate()) {
+                          setState(() => isLoading = true);
+                          try {
+                            final dio = ref.read(dioProvider);
+                            // Send request directly to API
+                            await dio.post(
+                                  '/support',
+                                  data: {
+                                    'subject': subjectController.text.trim(),
+                                    'message': messageController.text.trim(),
+                                  },
+                                );
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(context.translate('support_sent_success') ?? 'تم إرسال رسالتك بنجاح!')),
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(context.translate('error') ?? 'حدث خطأ، يرجى المحاولة لاحقاً')),
+                              );
+                            }
+                          } finally {
+                            if (context.mounted) setState(() => isLoading = false);
+                          }
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : Text(context.translate('send') ?? 'إرسال'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

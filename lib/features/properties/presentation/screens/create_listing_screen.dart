@@ -335,6 +335,199 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
     );
   }
 
+  Widget _buildPlanSelector(BuildContext context, dynamic settings) {
+    final primaryColor = Theme.of(context).primaryColor;
+
+    // تعريف الخطط
+    final plans = [
+      {
+        'type': 'Normal',
+        'duration': null,
+        'icon': Icons.list_alt_outlined,
+        'title': context.translate('normal') ?? 'عادي',
+        'subtitle': context.translate('free_listing_desc') ?? 'مجاني - إعلان عادي في نتائج البحث',
+        'price': null,
+        'badge': null,
+        'benefits': [
+          context.translate('featured_benefit_normal_1') ?? '✓ ظهور في نتائج البحث',
+          context.translate('featured_benefit_normal_2') ?? '✓ مجاني تماماً',
+        ],
+      },
+      {
+        'type': 'Featured',
+        'duration': 'week',
+        'icon': Icons.star_outline,
+        'title': context.translate('duration_week') ?? 'مميز أسبوع',
+        'subtitle': context.translate('duration_week_hint') ?? 'مثالي لو مستعجل تأجر بسرعة',
+        'price': settings?.featuredPriceWeek,
+        'badge': null,
+        'benefits': [
+          context.translate('featured_benefit_1') ?? '✓ أولوية في ظهور البحث',
+          context.translate('featured_benefit_2') ?? '✓ شارة مميز على الإعلان',
+          context.translate('featured_benefit_3') ?? '✓ وصول لعدد أكبر من العملاء',
+        ],
+      },
+      {
+        'type': 'Featured',
+        'duration': 'twoWeeks',
+        'icon': Icons.star,
+        'title': context.translate('duration_two_weeks') ?? 'مميز أسبوعين',
+        'subtitle': context.translate('duration_two_weeks_hint') ?? 'الأكثر طلبًا',
+        'price': settings?.featuredPriceTwoWeeks,
+        'badge': context.translate('most_popular') ?? 'الأكثر طلباً',
+        'benefits': [
+          context.translate('featured_benefit_1') ?? '✓ أولوية في ظهور البحث',
+          context.translate('featured_benefit_2') ?? '✓ شارة مميز على الإعلان',
+          context.translate('featured_benefit_3') ?? '✓ وصول لعدد أكبر من العملاء',
+        ],
+      },
+      {
+        'type': 'Featured',
+        'duration': 'month',
+        'icon': Icons.workspace_premium,
+        'title': context.translate('duration_month') ?? 'مميز شهر',
+        'subtitle': context.translate('duration_month_hint') ?? 'أوفر قيمة، وفر أكتر',
+        'price': settings?.featuredPriceMonth,
+        'badge': context.translate('best_value') ?? 'أفضل قيمة',
+        'benefits': [
+          context.translate('featured_benefit_1') ?? '✓ أولوية قصوى في ظهور البحث',
+          context.translate('featured_benefit_2') ?? '✓ شارة مميز على الإعلان',
+          context.translate('featured_benefit_3') ?? '✓ أكبر وصول ممكن للعملاء',
+        ],
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.translate('select_listing_plan') ?? 'اختر خطة الإعلان',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        if (_isEditing)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              context.translate('listing_type_locked_hint') ?? 'لا يمكن تغيير نوع الإعلان بعد الإنشاء',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+          ),
+        const SizedBox(height: 10),
+        ...plans.map((plan) {
+          final isSelected = _listingType == plan['type'] &&
+              (plan['duration'] == null ? _featuredDuration == null : _featuredDuration == plan['duration']);
+          final badge = plan['badge'] as String?;
+          final price = plan['price'];
+          final benefits = plan['benefits'] as List<String>;
+          final isNormal = plan['type'] == 'Normal';
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: InkWell(
+              onTap: _isEditing
+                  ? null
+                  : () => setState(() {
+                        _listingType = plan['type'] as String;
+                        _featuredDuration = plan['duration'] as String?;
+                      }),
+              borderRadius: BorderRadius.circular(12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? primaryColor : Colors.grey.shade300,
+                    width: isSelected ? 2 : 1,
+                  ),
+                  color: isSelected ? primaryColor.withOpacity(0.07) : Theme.of(context).cardColor,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // أيقونة الاختيار
+                    Radio<bool>(
+                      value: true,
+                      groupValue: isSelected,
+                      onChanged: _isEditing
+                          ? null
+                          : (_) => setState(() {
+                                _listingType = plan['type'] as String;
+                                _featuredDuration = plan['duration'] as String?;
+                              }),
+                      activeColor: primaryColor,
+                    ),
+                    const SizedBox(width: 4),
+                    // تفاصيل الخطة
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(plan['icon'] as IconData,
+                                  size: 18,
+                                  color: isNormal ? Colors.grey[600] : Colors.amber[700]),
+                              const SizedBox(width: 6),
+                              Text(
+                                plan['title'] as String,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: isSelected ? primaryColor : null,
+                                ),
+                              ),
+                              if (badge != null) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(badge,
+                                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                              const Spacer(),
+                              // السعر
+                              Text(
+                                isNormal
+                                    ? (context.translate('free') ?? 'مجاني')
+                                    : (price != null ? '${price.toInt()} ${context.translate('egp') ?? 'ج.م'}' : '...'),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: isNormal ? Colors.green[700] : primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            plan['subtitle'] as String,
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                          if (isSelected) ...[
+                            const SizedBox(height: 8),
+                            ...benefits.map((b) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: Text(b, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                                )),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
   Widget _buildBenefitItem(IconData icon, String? text) {
     if (text == null) return const SizedBox.shrink();
     return Padding(
@@ -552,63 +745,17 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     onChanged: (v) => setState(() => _listingPurpose = v!),
                   ),
                   const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _listingType,
-                    decoration: InputDecoration(
-                      labelText: context.translate('listing_type'),
-                      helperText: _isEditing
-                          ? (context.translate('listing_type_locked_hint') ??
-                          'Listing type cannot be changed after creation')
-                          : null,
-                    ),
-                    items: ['Normal', 'Featured']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(context.translate(e.toLowerCase()))))
-                        .toList(),
-                    // ممنوع تغيير نوع الإعلان وقت التعديل، عشان منحصلش على
-                    // عقار Featured من غير أي مسار دفع فعلي
-                    onChanged: _isEditing ? null : (v) => setState(() => _listingType = v!),
+                  // --- اختيار الخطة ---
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final settingsAsync = ref.watch(paymentMethodsProvider);
+                      return settingsAsync.when(
+                        data: (settings) => _buildPlanSelector(context, settings),
+                        loading: () => const Center(child: CircularProgressIndicator()),
+                        error: (_, __) => _buildPlanSelector(context, null),
+                      );
+                    },
                   ),
-                  if (_listingType == 'Featured') ...[
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.3)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.translate('featured_headline') ?? '🌟 خلي إعلانك يوصل لأكبر عدد ناس',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Theme.of(context).primaryColor),
-                          ),
-                          const SizedBox(height: 12),
-                          // Benefits section
-                          Text(
-                            context.translate('featured_benefits_title') ?? 'ليه تختار الإعلان المميز؟',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                          const SizedBox(height: 8),
-                          _buildBenefitItem(Icons.trending_up, context.translate('featured_benefit_1')),
-                          _buildBenefitItem(Icons.star_outline, context.translate('featured_benefit_2')),
-                          _buildBenefitItem(Icons.bolt, context.translate('featured_benefit_3')),
-                          const Divider(height: 24),
-                          Text(
-                            context.translate('select_duration') ?? 'اختر مدة التميز:',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                          const SizedBox(height: 8),
-                          _buildDurationOption('week', context.translate('duration_week') ?? 'أسبوع', context.translate('duration_week_hint') ?? 'مثالي لو مستعجل تأجر بسرعة'),
-                          const SizedBox(height: 8),
-                          _buildDurationOption('twoWeeks', context.translate('duration_two_weeks') ?? 'أسبوعين', context.translate('duration_two_weeks_hint') ?? 'الأكثر طلبًا', isPopular: true),
-                          const SizedBox(height: 8),
-                          _buildDurationOption('month', context.translate('duration_month') ?? 'شهر كامل', context.translate('duration_month_hint') ?? 'أوفر قيمة، وفر أكتر'),
-                        ],
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

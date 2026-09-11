@@ -35,8 +35,9 @@ class ApiConstants {
   static const String myPayments = '/payments/my';
   static const String paymentMethods = '/payments/methods';
 
-  // Settings
+  // Settings & Support
   static const String settings = '/settings';
+  static const String support = '/support';
 
   // Notifications
   static const String notifications = '/notifications';

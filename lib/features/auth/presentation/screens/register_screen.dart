@@ -16,6 +16,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -126,8 +127,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     labelText: context.translate('password'),
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return context.translate('required') ?? 'Required';
