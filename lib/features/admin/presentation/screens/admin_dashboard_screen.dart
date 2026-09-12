@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:sakan_app/core/localization/app_localizations.dart';
 import 'package:sakan_app/features/admin/presentation/providers/admin_provider.dart';
+import 'package:sakan_app/features/admin/presentation/screens/support_messages_screen.dart';
 
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -152,6 +153,20 @@ class AdminDashboardScreen extends ConsumerWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     // Navigate to Reports
+                  },
+                const Divider(),
+                ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(Icons.support_agent, color: Colors.white),
+                  ),
+                  title: Text(context.translate('support_messages') ?? 'رسائل الدعم الفني'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SupportMessagesScreen()),
+                    );
                   },
                 ),
               ],
