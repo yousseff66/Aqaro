@@ -215,9 +215,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<Map<String, dynamic>> deleteAccount() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      // 1. Unregister FCM token from server before deleting account
+      try {
+        await _ref.read(pushNotificationServiceProvider).unregisterDevice();
+      } catch (e) {
+        debugPrint('FCM unregister failed during account deletion: $e');
+      }
+
+      // 2. Call delete account API
       await _ref.read(dioProvider).delete(ApiConstants.deleteAccount);
       
-      // Logout locally
+      // 3. Clear local session
       await _ref.read(storageServiceProvider).removeToken();
       state = AuthState(isAuthenticated: false, user: null, isLoading: false);
       

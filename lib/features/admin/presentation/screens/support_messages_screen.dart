@@ -19,13 +19,13 @@ class SupportMessagesScreen extends ConsumerWidget {
       ref.invalidate(supportMessagesProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تحديد الرسالة كمقروءة/محلولة')),
+          SnackBar(content: Text(context.translate('resolved_success') ?? 'Message marked as resolved')),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ: ${e.toString()}')),
+          SnackBar(content: Text('${context.translate('error')}: ${e.toString()}')),
         );
       }
     }
@@ -37,12 +37,12 @@ class SupportMessagesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.translate('support_messages') ?? 'رسائل الدعم الفني'),
+        title: Text(context.translate('support_messages') ?? 'Support Messages'),
       ),
       body: messagesAsync.when(
         data: (messages) {
           if (messages.isEmpty) {
-            return const Center(child: Text('لا توجد رسائل حالياً'));
+            return Center(child: Text(context.translate('no_messages_yet') ?? 'No support messages currently'));
           }
           return RefreshIndicator(
             onRefresh: () async => ref.refresh(supportMessagesProvider),
@@ -58,14 +58,14 @@ class SupportMessagesScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ExpansionTile(
                     title: Text(
-                      msg['subject'] ?? 'بدون عنوان',
+                      msg['subject'] ?? context.translate('no_subject'),
                       style: TextStyle(
                         fontWeight: isResolved ? FontWeight.normal : FontWeight.bold,
                         color: isResolved ? Colors.grey : Colors.black,
                       ),
                     ),
                     subtitle: Text(
-                      user['name'] ?? user['email'] ?? 'مستخدم',
+                      user['name'] ?? user['email'] ?? context.translate('guest_user'),
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                     trailing: isResolved
@@ -82,15 +82,15 @@ class SupportMessagesScreen extends ConsumerWidget {
                               style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 16),
-                            Text('رقم الهاتف: ${user['phone'] ?? 'غير متوفر'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
-                            Text('الإيميل: ${user['email'] ?? 'غير متوفر'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
+                            Text('${context.translate('phone')}: ${user['phone'] ?? 'N/A'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
+                            Text('${context.translate('email_label')}: ${user['email'] ?? 'N/A'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
                             const SizedBox(height: 16),
                             if (!isResolved)
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton.icon(
                                   icon: const Icon(Icons.done),
-                                  label: const Text('تعليم كمحلولة (تم الرد)'),
+                                  label: Text(context.translate('mark_as_resolved') ?? 'Mark as Resolved'),
                                   onPressed: () => _resolveMessage(context, ref, msg['_id']),
                                 ),
                               ),
@@ -105,7 +105,17 @@ class SupportMessagesScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('خطأ في تحميل الرسائل\n$e')),
+        error: (e, st) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                context.translate('error_loading_messages') ?? 'خطأ في تحميل الرسائل',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

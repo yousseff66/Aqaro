@@ -154,6 +154,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                   onTap: () {
                     // Navigate to Reports
                   },
+                ),
                 const Divider(),
                 ListTile(
                   leading: const CircleAvatar(

@@ -664,7 +664,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ModeToggleAppBar(
-        title: _isEditing ? (context.translate('edit_listing') ?? 'Edit Listing') : context.translate('add_listing'),
+        title: _isEditing ? (context.translate('edit_listing') ?? 'Edit Listing') : (context.translate('add_listing') ?? 'Add Listing'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -677,7 +677,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
             ),
           ),
           child: Stepper(
-            type: StepperType.vertical, // حل مشكلة الـ Overflow
+            type: StepperType.vertical,
             currentStep: _currentStep,
             onStepContinue: () {
               if (_currentStep < 2) {
@@ -693,23 +693,23 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
             },
             steps: [
             Step(
-              title: Text(context.translate('basic_info')),
+              title: Text(context.translate('basic_info') ?? 'Basic Info'),
               isActive: _currentStep >= 0,
               content: Column(
                 children: [
                   TextFormField(
                     controller: _titleController,
-                    decoration: InputDecoration(labelText: context.translate('title')),
+                    decoration: InputDecoration(labelText: context.translate('title') ?? 'Title'),
                     textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                    validator: (v) => v!.isEmpty ? context.translate('required') : null,
+                    validator: (v) => v!.isEmpty ? (context.translate('required') ?? 'Required') : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: InputDecoration(labelText: context.translate('description')),
+                    decoration: InputDecoration(labelText: context.translate('description') ?? 'Description'),
                     maxLines: 3,
                     textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                    validator: (v) => v!.isEmpty ? context.translate('required') : null,
+                    validator: (v) => v!.isEmpty ? (context.translate('required') ?? 'Required') : null,
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -717,20 +717,20 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _priceController,
-                          decoration: InputDecoration(labelText: context.translate('price')),
+                          decoration: InputDecoration(labelText: context.translate('price') ?? 'Price'),
                           keyboardType: TextInputType.number,
                           textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                          validator: (v) => v!.isEmpty ? context.translate('required') : null,
+                          validator: (v) => v!.isEmpty ? (context.translate('required') ?? 'Required') : null,
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: TextFormField(
                           controller: _areaController,
-                          decoration: InputDecoration(labelText: context.translate('area')),
+                          decoration: InputDecoration(labelText: context.translate('area') ?? 'Area'),
                           keyboardType: TextInputType.number,
                           textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                          validator: (v) => v!.isEmpty ? context.translate('required') : null,
+                          validator: (v) => v!.isEmpty ? (context.translate('required') ?? 'Required') : null,
                         ),
                       ),
                     ],
@@ -745,7 +745,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     onChanged: (v) => setState(() => _listingPurpose = v!),
                   ),
                   const SizedBox(height: 16),
-                  // --- اختيار الخطة ---
                   Consumer(
                     builder: (context, ref, _) {
                       final settingsAsync = ref.watch(paymentMethodsProvider);
@@ -760,13 +759,13 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
               ),
             ),
             Step(
-              title: Text(context.translate('details')),
+              title: Text(context.translate('details') ?? 'Details'),
               isActive: _currentStep >= 1,
               content: Column(
                 children: [
                   DropdownButtonFormField<String>(
                     value: _propertyType,
-                    decoration: InputDecoration(labelText: context.translate('property_type')),
+                    decoration: InputDecoration(labelText: context.translate('property_type') ?? 'Property Type'),
                     items: ['Apartment', 'Villa', 'Studio', 'Office'].map((e) => DropdownMenuItem(
                       value: e,
                       child: Text(context.translate('type_${e.toLowerCase()}') ?? e),
@@ -779,7 +778,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       Expanded(
                         child: DropdownButtonFormField<int>(
                           value: _bedrooms,
-                          decoration: InputDecoration(labelText: context.translate('bedrooms')),
+                          decoration: InputDecoration(labelText: context.translate('bedrooms') ?? 'Bedrooms'),
                           items: List.generate(10, (i) => i + 1).map((e) => DropdownMenuItem(value: e, child: Text(e.toString()))).toList(),
                           onChanged: (v) => setState(() => _bedrooms = v!),
                         ),
@@ -788,7 +787,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       Expanded(
                         child: DropdownButtonFormField<int>(
                           value: _bathrooms,
-                          decoration: InputDecoration(labelText: context.translate('bathrooms')),
+                          decoration: InputDecoration(labelText: context.translate('bathrooms') ?? 'Bathrooms'),
                           items: List.generate(10, (i) => i + 1).map((e) => DropdownMenuItem(value: e, child: Text(e.toString()))).toList(),
                           onChanged: (v) => setState(() => _bathrooms = v!),
                         ),
@@ -797,7 +796,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: Text(context.translate('furnished')),
+                    title: Text(context.translate('furnished') ?? 'Furnished'),
                     value: _furnished,
                     onChanged: (v) => setState(() => _furnished = v),
                   ),
@@ -835,7 +834,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   ElevatedButton.icon(
                     onPressed: _pickImages,
                     icon: const Icon(Icons.add_a_photo),
-                    label: Text(context.translate('add_images')),
+                    label: Text(context.translate('add_images') ?? 'Add Images'),
                   ),
                   Wrap(
                     children: _images.map((img) => Stack(
@@ -858,15 +857,15 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
               ),
             ),
             Step(
-              title: Text(context.translate('location')),
+              title: Text(context.translate('location') ?? 'Location'),
               isActive: _currentStep >= 2,
               content: Column(
                 children: [
                   TextFormField(
                     controller: _addressController,
-                    decoration: InputDecoration(labelText: context.translate('address')),
+                    decoration: InputDecoration(labelText: context.translate('address') ?? 'Address'),
                     textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                    validator: (v) => v!.isEmpty ? context.translate('required') : null,
+                    validator: (v) => v!.isEmpty ? (context.translate('required') ?? 'Required') : null,
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
@@ -875,7 +874,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     onChanged: (v) => setState(() => _showExactLocation = v),
                   ),
                   const SizedBox(height: 16),
-                  Text(context.translate('select_on_map')),
+                  Text(context.translate('select_on_map') ?? 'Select on map'),
                   const SizedBox(height: 12),
                   SizedBox(
                     height: 350, // زودنا الارتفاع شوية للتحكم الأفضل
@@ -956,7 +955,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                context.translate('move_map_to_select') ?? 'حرك الخريطة لتحديد الموقع بدقة',
+                                context.translate('move_map_to_select') ?? 'Move map to select location',
                                 style: const TextStyle(color: Colors.white, fontSize: 12),
                               ),
                             ),
@@ -967,7 +966,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    context.translate('location_hint') ?? 'اسحب الخريطة لجعل الدبوس فوق موقع عقارك تماماً',
+                    context.translate('location_hint') ?? 'Drag map to place pin over your property',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),

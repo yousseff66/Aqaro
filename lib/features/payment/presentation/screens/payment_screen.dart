@@ -77,24 +77,24 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 const SizedBox(height: 24),
 
                 // --- الخطوة 1: اختر طريقة الدفع ---
-                _buildStepHeader('1', context.translate('select_payment_method') ?? 'اختر طريقة الدفع'),
+                _buildStepHeader('1', context.translate('select_payment_method') ?? 'Select Payment Method'),
                 const SizedBox(height: 12),
                 ...enabledMethods.map((method) => _buildMethodTile(method.key, method.value)),
 
                 // --- الخطوة 2: حوّل المبلغ ---
                 if (_selectedMethod != null) ...[
                   const SizedBox(height: 24),
-                  _buildStepHeader('2', context.translate('transfer_amount') ?? 'حوّل المبلغ'),
+                  _buildStepHeader('2', context.translate('transfer_amount') ?? 'Transfer Amount'),
                   const SizedBox(height: 12),
                   _buildTransferInstructions(amount, settings, context),
                 ],
 
                 // --- الخطوة 3: ارفع صورة الإيصال ---
                 const SizedBox(height: 24),
-                _buildStepHeader('3', context.translate('attach_receipt') ?? 'ارفع صورة الإيصال'),
+                _buildStepHeader('3', context.translate('attach_receipt') ?? 'Attach Receipt'),
                 const SizedBox(height: 8),
                 Text(
-                  context.translate('attach_receipt_hint') ?? 'بعد ما تحول، صوّر الإيصال وارفعه هنا للتحقق من الدفع',
+                  context.translate('attach_receipt_hint') ?? 'After transferring, screenshot the receipt and upload here for verification',
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 12),
@@ -116,7 +116,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error loading payment methods: $e')),
+        error: (e, _) => Center(child: Text('${context.translate('error')}: $e')),
       ),
     );
   }

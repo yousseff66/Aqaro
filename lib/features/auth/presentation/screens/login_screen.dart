@@ -62,7 +62,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary, // تغيير للون الداكن
                     ),
                   ),
                 ),
@@ -77,7 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary, // تغيير للون الداكن
                     ),
                   ),
                 ),
@@ -146,7 +146,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
                       );
                     },
-                    child: Text(context.translate('forgot_password')),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary, // استخدام الكربوني بدل الليموني
+                    ),
+                    child: Text(
+                      context.translate('forgot_password'),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -165,7 +171,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                         )
                       : Text(context.translate('login_button')),
                 ),
@@ -173,7 +179,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 OutlinedButton(
                   onPressed: () => ref.read(authProvider.notifier).skipLogin(),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                    side: BorderSide(color: Theme.of(context).colorScheme.secondary), // حدود كربونية واضحة
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Text(
                     context.translate('skip'),
@@ -187,7 +194,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       MaterialPageRoute(builder: (_) => const RegisterScreen()),
                     );
                   },
-                  child: Text(context.translate('dont_have_account')),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                  child: Text(
+                    context.translate('dont_have_account'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
               ],
             ),
