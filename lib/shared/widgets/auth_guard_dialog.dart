@@ -12,12 +12,22 @@ class AuthGuardDialog extends StatelessWidget {
     required this.message,
   });
 
-  static Future<void> show(BuildContext context, {String? title, String? message}) {
+  static Future<void> show(
+    BuildContext context, {
+    String? title,
+    String? message,
+  }) {
     return showDialog(
       context: context,
       builder: (context) => AuthGuardDialog(
-        title: title ?? context.translate('auth_required_title') ?? 'Authentication Required',
-        message: message ?? context.translate('auth_required_message') ?? 'Please login to access this feature.',
+        title:
+            title ??
+            context.translate('auth_required_title') ??
+            'Authentication Required',
+        message:
+            message ??
+            context.translate('auth_required_message') ??
+            'Please login to access this feature.',
       ),
     );
   }
@@ -35,9 +45,9 @@ class AuthGuardDialog extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             Navigator.pop(context);
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
           },
           child: Text(context.translate('login') ?? 'Login'),
         ),

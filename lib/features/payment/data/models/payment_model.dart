@@ -27,14 +27,21 @@ class Payment {
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
       id: json['_id'],
-      user: json['user'] != null && json['user'] is Map<String, dynamic> ? User.fromJson(json['user']) : null,
-      property: json['property'] != null && json['property'] is Map<String, dynamic> ? Property.fromJson(json['property']) : null,
+      user: json['user'] != null && json['user'] is Map<String, dynamic>
+          ? User.fromJson(json['user'])
+          : null,
+      property:
+          json['property'] != null && json['property'] is Map<String, dynamic>
+          ? Property.fromJson(json['property'])
+          : null,
       amount: (json['amount'] as num).toDouble(),
       paymentMethod: json['paymentMethod'] ?? '',
       status: json['status'] ?? 'Pending',
       isRenewal: json['isRenewal'] as bool? ?? false,
       receiptImage: json['receiptImage'] as String?,
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
     );
   }
 }

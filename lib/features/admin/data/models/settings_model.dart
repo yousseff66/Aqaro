@@ -31,8 +31,10 @@ class PlatformSettings {
     return PlatformSettings(
       normalListingPrice: (json['normalListingPrice'] as num).toDouble(),
       featuredPriceWeek: (json['featuredPriceWeek'] as num?)?.toDouble() ?? 60,
-      featuredPriceTwoWeeks: (json['featuredPriceTwoWeeks'] as num?)?.toDouble() ?? 120,
-      featuredPriceMonth: (json['featuredPriceMonth'] as num?)?.toDouble() ?? 150,
+      featuredPriceTwoWeeks:
+          (json['featuredPriceTwoWeeks'] as num?)?.toDouble() ?? 120,
+      featuredPriceMonth:
+          (json['featuredPriceMonth'] as num?)?.toDouble() ?? 150,
       listingDurationDays: json['listingDurationDays'] as int,
       paymentMethods: methods,
       supportPhone: json['supportPhone'] ?? '',

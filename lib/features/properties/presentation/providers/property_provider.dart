@@ -2,21 +2,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
 import 'package:sakan_app/features/properties/data/repositories/property_repository.dart';
 
-final homePurposeFilterProvider = StateProvider<String?>((ref) => null); // null = All
+final homePurposeFilterProvider = StateProvider<String?>(
+  (ref) => null,
+); // null = All
 
-final propertyListProvider = StateNotifierProvider<PropertyListNotifier, AsyncValue<List<Property>>>((ref) {
-  final notifier = PropertyListNotifier(ref.read(propertyRepositoryProvider));
-  // Initial fetch for home screen with refresh: true to ensure loading state
-  notifier.fetchProperties(refresh: true);
-  return notifier;
-});
+final propertyListProvider =
+    StateNotifierProvider<PropertyListNotifier, AsyncValue<List<Property>>>((
+      ref,
+    ) {
+      final notifier = PropertyListNotifier(
+        ref.read(propertyRepositoryProvider),
+      );
+      // Initial fetch for home screen with refresh: true to ensure loading state
+      notifier.fetchProperties(refresh: true);
+      return notifier;
+    });
 
-final searchResultsProvider = StateNotifierProvider.autoDispose<PropertyListNotifier, AsyncValue<List<Property>>>((ref) {
-  final notifier = PropertyListNotifier(ref.read(propertyRepositoryProvider));
-  // Fetch all properties by default when the search screen is opened
-  notifier.fetchProperties(refresh: true);
-  return notifier;
-});
+final searchResultsProvider =
+    StateNotifierProvider.autoDispose<
+      PropertyListNotifier,
+      AsyncValue<List<Property>>
+    >((ref) {
+      final notifier = PropertyListNotifier(
+        ref.read(propertyRepositoryProvider),
+      );
+      // Fetch all properties by default when the search screen is opened
+      notifier.fetchProperties(refresh: true);
+      return notifier;
+    });
 
 class PropertyListNotifier extends StateNotifier<AsyncValue<List<Property>>> {
   final PropertyRepository _repository;
@@ -78,14 +91,14 @@ class PropertyListNotifier extends StateNotifier<AsyncValue<List<Property>>> {
       } else {
         final currentList = state.value ?? [];
         final newList = [...currentList, ...properties];
-        
+
         // Re-sort the entire list to ensure featured items stay at the top even after pagination
         newList.sort((a, b) {
           if (a.isFeatured && !b.isFeatured) return -1;
           if (!a.isFeatured && b.isFeatured) return 1;
           return 0;
         });
-        
+
         state = AsyncValue.data(newList);
       }
 
@@ -104,7 +117,10 @@ class PropertyListNotifier extends StateNotifier<AsyncValue<List<Property>>> {
   }
 }
 
-final propertyDetailsProvider = FutureProvider.family<Property, String>((ref, id) async {
+final propertyDetailsProvider = FutureProvider.family<Property, String>((
+  ref,
+  id,
+) async {
   return ref.read(propertyRepositoryProvider).getPropertyById(id);
 });
 
@@ -114,10 +130,8 @@ final myPropertiesProvider = FutureProvider<List<Property>>((ref) async {
 
 final featuredPropertiesProvider = FutureProvider<List<Property>>((ref) async {
   final purpose = ref.watch(homePurposeFilterProvider);
-  final result = await ref.read(propertyRepositoryProvider).getProperties(
-        featured: true,
-        limit: 5,
-        listingPurpose: purpose,
-      );
+  final result = await ref
+      .read(propertyRepositoryProvider)
+      .getProperties(featured: true, limit: 5, listingPurpose: purpose);
   return result['results'] as List<Property>;
 });

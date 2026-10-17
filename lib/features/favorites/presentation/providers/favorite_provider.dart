@@ -14,7 +14,8 @@ final favoritesListProvider = FutureProvider<List<Property>>((ref) async {
 final favoriteIdsProvider = Provider<Set<String>>((ref) {
   final favoritesAsync = ref.watch(favoritesListProvider);
   return favoritesAsync.maybeWhen(
-    data: (properties) => properties.map((p) => p.id).whereType<String>().toSet(),
+    data: (properties) =>
+        properties.map((p) => p.id).whereType<String>().toSet(),
     orElse: () => <String>{},
   );
 });
@@ -22,7 +23,8 @@ final favoriteIdsProvider = Provider<Set<String>>((ref) {
 class FavoriteToggleNotifier extends StateNotifier<AsyncValue<void>> {
   final FavoriteRepository _repository;
   final Ref _ref;
-  FavoriteToggleNotifier(this._repository, this._ref) : super(const AsyncValue.data(null));
+  FavoriteToggleNotifier(this._repository, this._ref)
+    : super(const AsyncValue.data(null));
 
   Future<void> toggle(String propertyId, bool isCurrentlyFavorite) async {
     state = const AsyncValue.loading();
@@ -40,6 +42,7 @@ class FavoriteToggleNotifier extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final favoriteToggleProvider = StateNotifierProvider<FavoriteToggleNotifier, AsyncValue<void>>((ref) {
-  return FavoriteToggleNotifier(ref.read(favoriteRepositoryProvider), ref);
-});
+final favoriteToggleProvider =
+    StateNotifierProvider<FavoriteToggleNotifier, AsyncValue<void>>((ref) {
+      return FavoriteToggleNotifier(ref.read(favoriteRepositoryProvider), ref);
+    });

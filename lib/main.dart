@@ -29,7 +29,8 @@ import 'package:sakan_app/features/admin/presentation/screens/payments_review_sc
 import 'package:sakan_app/features/admin/presentation/screens/reports_management_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +49,9 @@ void main() async {
   );
 }
 
-final themeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((
+  ref,
+) {
   return ThemeModeNotifier(ref);
 });
 
@@ -117,17 +120,14 @@ class _SakanAppState extends ConsumerState<SakanApp> {
       theme: buildAppTheme(),
       themeMode: themeMode,
       locale: locale,
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ar')],
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: authState.isLoading 
+      home: authState.isLoading
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : const MainScreen(),
     );
@@ -140,7 +140,7 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    
+
     // Check if authenticated first
     if (authState.isAuthenticated) {
       if (authState.user?.role == 'Admin') {
@@ -159,7 +159,8 @@ class UserNavigationShell extends ConsumerStatefulWidget {
   const UserNavigationShell({super.key});
 
   @override
-  ConsumerState<UserNavigationShell> createState() => _UserNavigationShellState();
+  ConsumerState<UserNavigationShell> createState() =>
+      _UserNavigationShellState();
 }
 
 class _UserNavigationShellState extends ConsumerState<UserNavigationShell> {
@@ -217,15 +218,15 @@ class AdminDashboardShell extends StatefulWidget {
 class _AdminDashboardShellState extends State<AdminDashboardShell> {
   int _currentIndex = 0;
 
-    final List<Widget> _screens = [
-      const AdminDashboardScreen(),
-      const PendingListingsScreen(),
-      const PaymentsReviewScreen(),
-      const ReportsManagementScreen(),
-      const UsersManagementScreen(),
-      const PlatformSettingsScreen(),
-      const SendNotificationScreen(),
-    ];
+  final List<Widget> _screens = [
+    const AdminDashboardScreen(),
+    const PendingListingsScreen(),
+    const PaymentsReviewScreen(),
+    const ReportsManagementScreen(),
+    const UsersManagementScreen(),
+    const PlatformSettingsScreen(),
+    const SendNotificationScreen(),
+  ];
 
   final List<String> _titles = const [
     'admin_dashboard',
@@ -246,19 +247,44 @@ class _AdminDashboardShellState extends State<AdminDashboardShell> {
           child: ListView(
             children: [
               DrawerHeader(
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 child: Text(
                   '${context.translate('app_title')} Admin',
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 24),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 24,
+                  ),
                 ),
               ),
-              _buildDrawerItem(0, Icons.dashboard, context.translate('admin_dashboard')),
-              _buildDrawerItem(1, Icons.pending_actions, context.translate('pending_listings')),
+              _buildDrawerItem(
+                0,
+                Icons.dashboard,
+                context.translate('admin_dashboard'),
+              ),
+              _buildDrawerItem(
+                1,
+                Icons.pending_actions,
+                context.translate('pending_listings'),
+              ),
               _buildDrawerItem(2, Icons.payment, context.translate('payments')),
-              _buildDrawerItem(3, Icons.report_problem, context.translate('reports')),
+              _buildDrawerItem(
+                3,
+                Icons.report_problem,
+                context.translate('reports'),
+              ),
               _buildDrawerItem(4, Icons.people, context.translate('users')),
-              _buildDrawerItem(5, Icons.settings, context.translate('settings')),
-              _buildDrawerItem(6, Icons.notifications_active, context.translate('send_notification')),
+              _buildDrawerItem(
+                5,
+                Icons.settings,
+                context.translate('settings'),
+              ),
+              _buildDrawerItem(
+                6,
+                Icons.notifications_active,
+                context.translate('send_notification'),
+              ),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.logout),
@@ -275,8 +301,20 @@ class _AdminDashboardShellState extends State<AdminDashboardShell> {
 
   Widget _buildDrawerItem(int index, IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon, color: _currentIndex == index ? Theme.of(context).colorScheme.primary : null),
-      title: Text(title, style: TextStyle(color: _currentIndex == index ? Theme.of(context).colorScheme.primary : null)),
+      leading: Icon(
+        icon,
+        color: _currentIndex == index
+            ? Theme.of(context).colorScheme.primary
+            : null,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: _currentIndex == index
+              ? Theme.of(context).colorScheme.primary
+              : null,
+        ),
+      ),
       selected: _currentIndex == index,
       onTap: () {
         setState(() => _currentIndex = index);

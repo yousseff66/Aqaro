@@ -19,14 +19,10 @@ class FavoritesScreen extends ConsumerWidget {
 
     if (authState.isGuest || !authState.isAuthenticated) {
       return Scaffold(
-        appBar: ModeToggleAppBar(
-          title: context.translate('my_favorites'),
-        ),
+        appBar: ModeToggleAppBar(title: context.translate('my_favorites')),
         body: const Padding(
           padding: EdgeInsets.all(24.0),
-          child: Center(
-            child: GuestPromptCard(),
-          ),
+          child: Center(child: GuestPromptCard()),
         ),
       );
     }
@@ -50,9 +46,16 @@ class FavoritesScreen extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.favorite_border, size: 80, color: Colors.grey),
+                          const Icon(
+                            Icons.favorite_border,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 16),
-                          Text(context.translate('no_favorites') ?? 'No favorites yet'),
+                          Text(
+                            context.translate('no_favorites') ??
+                                'No favorites yet',
+                          ),
                         ],
                       ),
                     ),
@@ -73,7 +76,8 @@ class FavoritesScreen extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PropertyDetailScreen(propertyId: property.id!),
+                        builder: (context) =>
+                            PropertyDetailScreen(propertyId: property.id!),
                       ),
                     );
                   },

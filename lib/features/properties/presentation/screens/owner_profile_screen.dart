@@ -33,29 +33,46 @@ class OwnerProfileScreen extends ConsumerWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Theme.of(context).colorScheme.secondary,
-                    backgroundImage: owner.avatar != null ? NetworkImage(owner.avatar!) : null,
+                    backgroundImage: owner.avatar != null
+                        ? NetworkImage(owner.avatar!)
+                        : null,
                     child: owner.avatar == null
                         ? Text(
-                            owner.name.isNotEmpty ? owner.name[0].toUpperCase() : 'O',
-                            style: TextStyle(fontSize: 40, color: Theme.of(context).colorScheme.onSecondary),
+                            owner.name.isNotEmpty
+                                ? owner.name[0].toUpperCase()
+                                : 'O',
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
                           )
                         : null,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     owner.name,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   if (owner.isVerified) ...[
                     const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.verified, color: Colors.green, size: 20),
+                        const Icon(
+                          Icons.verified,
+                          color: Colors.green,
+                          size: 20,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           context.translate('verified_owner'),
-                          style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -70,7 +87,9 @@ class OwnerProfileScreen extends ConsumerWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -80,13 +99,19 @@ class OwnerProfileScreen extends ConsumerWidget {
                       children: [
                         Text(
                           (rating['average'] as num).toStringAsFixed(1),
-                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: List.generate(5, (index) {
                             return Icon(
-                              index < (rating['average'] as num).floor() ? Icons.star : Icons.star_border,
+                              index < (rating['average'] as num).floor()
+                                  ? Icons.star
+                                  : Icons.star_border,
                               color: Colors.amber,
                               size: 20,
                             );
@@ -99,7 +124,10 @@ class OwnerProfileScreen extends ConsumerWidget {
                       children: [
                         Text(
                           rating['count'].toString(),
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           context.translate('reviews') ?? 'Reviews',
@@ -122,7 +150,10 @@ class OwnerProfileScreen extends ConsumerWidget {
                 children: [
                   Text(
                     context.translate('reviews') ?? 'Reviews',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   reviewsAsync.when(
@@ -133,11 +164,19 @@ class OwnerProfileScreen extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(vertical: 40),
                             child: Column(
                               children: [
-                                Icon(Icons.rate_review_outlined, size: 64, color: Colors.grey[300]),
+                                Icon(
+                                  Icons.rate_review_outlined,
+                                  size: 64,
+                                  color: Colors.grey[300],
+                                ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  context.translate('no_reviews_yet') ?? 'No reviews yet',
-                                  style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                                  context.translate('no_reviews_yet') ??
+                                      'No reviews yet',
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ],
                             ),
@@ -148,24 +187,34 @@ class OwnerProfileScreen extends ConsumerWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: reviews.length,
-                        separatorBuilder: (context, index) => const Divider(height: 32),
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 32),
                         itemBuilder: (context, index) {
                           final review = reviews[index];
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    review.reviewer?.name ?? context.translate('guest_user'),
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    review.reviewer?.name ??
+                                        context.translate('guest_user'),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   Text(
                                     review.createdAt != null
-                                        ? intl.DateFormat('dd/MM/yyyy').format(review.createdAt!)
+                                        ? intl.DateFormat(
+                                            'dd/MM/yyyy',
+                                          ).format(review.createdAt!)
                                         : '',
-                                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                                    style: TextStyle(
+                                      color: Colors.grey[500],
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -173,7 +222,9 @@ class OwnerProfileScreen extends ConsumerWidget {
                               Row(
                                 children: List.generate(5, (starIndex) {
                                   return Icon(
-                                    starIndex < review.rating ? Icons.star : Icons.star_border,
+                                    starIndex < review.rating
+                                        ? Icons.star
+                                        : Icons.star_border,
                                     color: Colors.amber,
                                     size: 16,
                                   );
@@ -183,7 +234,10 @@ class OwnerProfileScreen extends ConsumerWidget {
                                 const SizedBox(height: 8),
                                 Text(
                                   review.comment,
-                                  style: TextStyle(color: Colors.grey[800], height: 1.4),
+                                  style: TextStyle(
+                                    color: Colors.grey[800],
+                                    height: 1.4,
+                                  ),
                                 ),
                               ],
                             ],
@@ -191,8 +245,10 @@ class OwnerProfileScreen extends ConsumerWidget {
                         },
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (err, __) => Center(child: Text('Error loading reviews')),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, __) =>
+                        Center(child: Text('Error loading reviews')),
                   ),
                   const SizedBox(height: 40),
                 ],

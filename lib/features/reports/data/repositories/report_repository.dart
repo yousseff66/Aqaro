@@ -4,7 +4,9 @@ import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/reports/data/models/report_model.dart';
 
-final reportRepositoryProvider = Provider((ref) => ReportRepository(ref.read(dioProvider)));
+final reportRepositoryProvider = Provider(
+  (ref) => ReportRepository(ref.read(dioProvider)),
+);
 
 class ReportRepository {
   final Dio _dio;
@@ -39,11 +41,18 @@ class ReportRepository {
     await _dio.post(ApiConstants.reports, data: data);
   }
 
-  Future<void> updateReportStatus(String id, String status, {String? reviewNote}) async {
-    await _dio.patch('${ApiConstants.reports}/$id', data: {
-      'status': status,
-      if (reviewNote != null) 'reviewNote': reviewNote,
-    });
+  Future<void> updateReportStatus(
+    String id,
+    String status, {
+    String? reviewNote,
+  }) async {
+    await _dio.patch(
+      '${ApiConstants.reports}/$id',
+      data: {
+        'status': status,
+        if (reviewNote != null) 'reviewNote': reviewNote,
+      },
+    );
   }
 
   Future<void> deleteReportedProperty(String id) async {

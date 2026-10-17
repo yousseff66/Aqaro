@@ -74,20 +74,30 @@ class Property {
       area: (json['area'] as num?)?.toDouble() ?? 0.0,
       floor: json['floor'] as int?,
       propertyType: json['propertyType'] as String? ?? 'Unknown',
-      furnished: json['furnished'] is bool 
-          ? json['furnished'] as bool 
+      furnished: json['furnished'] is bool
+          ? json['furnished'] as bool
           : json['furnished'] == 'true',
-      images: json['images'] is List ? List<String>.from(json['images']) : const [],
-      imagePublicIds: json['imagePublicIds'] is List ? List<String>.from(json['imagePublicIds']) : const [],
+      images: json['images'] is List
+          ? List<String>.from(json['images'])
+          : const [],
+      imagePublicIds: json['imagePublicIds'] is List
+          ? List<String>.from(json['imagePublicIds'])
+          : const [],
       status: json['status'] as String? ?? 'Pending',
       views: json['views'] as int? ?? 0,
       favoritesCount: json['favoritesCount'] as int? ?? 0,
       listingType: json['listingType'] as String? ?? 'Normal',
       listingPurpose: json['listingPurpose'] as String? ?? 'Rent',
       featuredDuration: json['featuredDuration'] as String?,
-      featuredExpiresAt: json['featuredExpiresAt'] != null ? DateTime.tryParse(json['featuredExpiresAt']) : null,
-      publishedAt: json['publishedAt'] != null ? DateTime.tryParse(json['publishedAt']) : null,
-      expiresAt: json['expiresAt'] != null ? DateTime.tryParse(json['expiresAt']) : null,
+      featuredExpiresAt: json['featuredExpiresAt'] != null
+          ? DateTime.tryParse(json['featuredExpiresAt'])
+          : null,
+      publishedAt: json['publishedAt'] != null
+          ? DateTime.tryParse(json['publishedAt'])
+          : null,
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.tryParse(json['expiresAt'])
+          : null,
       showExactLocation: json['showExactLocation'] as bool? ?? true,
       location: LocationData.fromJson(json['location']),
       owner: json['owner'] != null && json['owner'] is Map<String, dynamic>
@@ -123,10 +133,9 @@ class LocationData {
     }
   }
 
-  Map<String, dynamic> toJson() => {
-    'type': type,
-    'coordinates': coordinates,
-  };
+  Map<String, dynamic> toJson() => {'type': type, 'coordinates': coordinates};
 
-  bool get isValid => coordinates.length == 2 && (coordinates[0] != 0.0 || coordinates[1] != 0.0);
+  bool get isValid =>
+      coordinates.length == 2 &&
+      (coordinates[0] != 0.0 || coordinates[1] != 0.0);
 }

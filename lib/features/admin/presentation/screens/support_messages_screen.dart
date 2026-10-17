@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/localization/app_localizations.dart';
 
-final supportMessagesProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
+final supportMessagesProvider = FutureProvider.autoDispose<List<dynamic>>((
+  ref,
+) async {
   final dio = ref.watch(dioProvider);
   final response = await dio.get('/support/admin');
   return response.data as List<dynamic>;
@@ -12,20 +14,31 @@ final supportMessagesProvider = FutureProvider.autoDispose<List<dynamic>>((ref) 
 class SupportMessagesScreen extends ConsumerWidget {
   const SupportMessagesScreen({super.key});
 
-  Future<void> _resolveMessage(BuildContext context, WidgetRef ref, String id) async {
+  Future<void> _resolveMessage(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
     try {
       final dio = ref.read(dioProvider);
       await dio.patch('/support/admin/$id/resolve');
       ref.invalidate(supportMessagesProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.translate('resolved_success') ?? 'Message marked as resolved')),
+          SnackBar(
+            content: Text(
+              context.translate('resolved_success') ??
+                  'Message marked as resolved',
+            ),
+          ),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${context.translate('error')}: ${e.toString()}')),
+          SnackBar(
+            content: Text('${context.translate('error')}: ${e.toString()}'),
+          ),
         );
       }
     }
@@ -37,12 +50,19 @@ class SupportMessagesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.translate('support_messages') ?? 'Support Messages'),
+        title: Text(
+          context.translate('support_messages') ?? 'Support Messages',
+        ),
       ),
       body: messagesAsync.when(
         data: (messages) {
           if (messages.isEmpty) {
-            return Center(child: Text(context.translate('no_messages_yet') ?? 'No support messages currently'));
+            return Center(
+              child: Text(
+                context.translate('no_messages_yet') ??
+                    'No support messages currently',
+              ),
+            );
           }
           return RefreshIndicator(
             onRefresh: () async => ref.refresh(supportMessagesProvider),
@@ -60,12 +80,16 @@ class SupportMessagesScreen extends ConsumerWidget {
                     title: Text(
                       msg['subject'] ?? context.translate('no_subject'),
                       style: TextStyle(
-                        fontWeight: isResolved ? FontWeight.normal : FontWeight.bold,
+                        fontWeight: isResolved
+                            ? FontWeight.normal
+                            : FontWeight.bold,
                         color: isResolved ? Colors.grey : Colors.black,
                       ),
                     ),
                     subtitle: Text(
-                      user['name'] ?? user['email'] ?? context.translate('guest_user'),
+                      user['name'] ??
+                          user['email'] ??
+                          context.translate('guest_user'),
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                     trailing: isResolved
@@ -82,16 +106,32 @@ class SupportMessagesScreen extends ConsumerWidget {
                               style: const TextStyle(fontSize: 14),
                             ),
                             const SizedBox(height: 16),
-                            Text('${context.translate('phone')}: ${user['phone'] ?? 'N/A'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
-                            Text('${context.translate('email_label')}: ${user['email'] ?? 'N/A'}', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
+                            Text(
+                              '${context.translate('phone')}: ${user['phone'] ?? 'N/A'}',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              '${context.translate('email_label')}: ${user['email'] ?? 'N/A'}',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(height: 16),
                             if (!isResolved)
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton.icon(
                                   icon: const Icon(Icons.done),
-                                  label: Text(context.translate('mark_as_resolved') ?? 'Mark as Resolved'),
-                                  onPressed: () => _resolveMessage(context, ref, msg['_id']),
+                                  label: Text(
+                                    context.translate('mark_as_resolved') ??
+                                        'Mark as Resolved',
+                                  ),
+                                  onPressed: () =>
+                                      _resolveMessage(context, ref, msg['_id']),
                                 ),
                               ),
                           ],
@@ -110,7 +150,8 @@ class SupportMessagesScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                context.translate('error_loading_messages') ?? 'خطأ في تحميل الرسائل',
+                context.translate('error_loading_messages') ??
+                    'خطأ في تحميل الرسائل',
                 textAlign: TextAlign.center,
               ),
             ),

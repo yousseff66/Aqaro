@@ -24,7 +24,10 @@ ThemeData buildAppTheme() {
       elevation: 0,
       centerTitle: true,
       toolbarHeight: 70,
-      iconTheme: const IconThemeData(color: AppColors.carbon900, size: 24), // التأكد من لون وحجم زرار الرجوع
+      iconTheme: const IconThemeData(
+        color: AppColors.carbon900,
+        size: 24,
+      ), // التأكد من لون وحجم زرار الرجوع
       titleTextStyle: GoogleFonts.vazirmatn(
         fontSize: 22,
         fontWeight: FontWeight.w900,
@@ -39,7 +42,10 @@ ThemeData buildAppTheme() {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         elevation: 0,
-        textStyle: GoogleFonts.vazirmatn(fontWeight: FontWeight.w800, fontSize: 15),
+        textStyle: GoogleFonts.vazirmatn(
+          fontWeight: FontWeight.w800,
+          fontSize: 15,
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -60,7 +66,11 @@ ThemeData buildAppTheme() {
     ),
     chipTheme: ChipThemeData(
       backgroundColor: AppColors.lime300,
-      labelStyle: GoogleFonts.vazirmatn(color: AppColors.carbon900, fontWeight: FontWeight.w700, fontSize: 12),
+      labelStyle: GoogleFonts.vazirmatn(
+        color: AppColors.carbon900,
+        fontWeight: FontWeight.w700,
+        fontSize: 12,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
     ),
@@ -81,7 +91,10 @@ ThemeData buildAppTheme() {
       backgroundColor: AppColors.white,
       selectedItemColor: AppColors.carbon900,
       unselectedItemColor: AppColors.muted,
-      selectedLabelStyle: GoogleFonts.vazirmatn(fontSize: 11, fontWeight: FontWeight.w700),
+      selectedLabelStyle: GoogleFonts.vazirmatn(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+      ),
       type: BottomNavigationBarType.fixed,
       elevation: 8,
     ),
@@ -90,9 +103,17 @@ ThemeData buildAppTheme() {
       indicatorColor: AppColors.lime500,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return GoogleFonts.vazirmatn(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.carbon900);
+          return GoogleFonts.vazirmatn(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: AppColors.carbon900,
+          );
         }
-        return GoogleFonts.vazirmatn(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.muted);
+        return GoogleFonts.vazirmatn(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: AppColors.muted,
+        );
       }),
     ),
   );

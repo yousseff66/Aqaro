@@ -23,16 +23,20 @@ class PropertyReport {
   factory PropertyReport.fromJson(Map<String, dynamic> json) {
     return PropertyReport(
       id: json['_id'],
-      property: json['property'] != null && json['property'] is Map<String, dynamic> 
-          ? Property.fromJson(json['property']) 
+      property:
+          json['property'] != null && json['property'] is Map<String, dynamic>
+          ? Property.fromJson(json['property'])
           : null,
-      reporter: json['reporter'] != null && json['reporter'] is Map<String, dynamic> 
-          ? User.fromJson(json['reporter']) 
+      reporter:
+          json['reporter'] != null && json['reporter'] is Map<String, dynamic>
+          ? User.fromJson(json['reporter'])
           : null,
       reason: json['reason'],
       description: json['description'] ?? '',
       status: json['status'] ?? 'Pending',
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
     );
   }
 }

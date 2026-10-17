@@ -16,34 +16,35 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Handling a background message: ${message.messageId}");
 }
 
-final pushNotificationServiceProvider = Provider((ref) => PushNotificationService(ref));
+final pushNotificationServiceProvider = Provider(
+  (ref) => PushNotificationService(ref),
+);
 
 class PushNotificationService {
   final Ref _ref;
   PushNotificationService(this._ref);
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
     // إعداد معالج الخلفية
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // طلب الإذن
-    await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
     // إعداد الإشعارات المحلية
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await _localNotifications.initialize(
       initializationSettings,
@@ -118,11 +119,12 @@ class PushNotificationService {
       final deviceId = await _getDeviceId();
       final platform = Platform.isAndroid ? 'android' : 'ios';
 
-      await _ref.read(dioProvider).patch('/users/me/fcm-token', data: {
-        'token': token,
-        'platform': platform,
-        'deviceId': deviceId,
-      });
+      await _ref
+          .read(dioProvider)
+          .patch(
+            '/users/me/fcm-token',
+            data: {'token': token, 'platform': platform, 'deviceId': deviceId},
+          );
       debugPrint('FCM Token registered successfully');
     } catch (e) {
       debugPrint('Failed to register FCM token: $e');
@@ -133,7 +135,9 @@ class PushNotificationService {
     try {
       String? token = await _messaging.getToken();
       if (token == null) return;
-      await _ref.read(dioProvider).delete('/users/me/fcm-token', data: {'token': token});
+      await _ref
+          .read(dioProvider)
+          .delete('/users/me/fcm-token', data: {'token': token});
     } catch (e) {
       debugPrint('Failed to unregister: $e');
     }
@@ -154,13 +158,13 @@ class PushNotificationService {
   void _showLocalNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'high_importance_channel',
-      'High Importance Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      color: Color(0xFFC6FF3D),
-    );
+          'high_importance_channel',
+          'High Importance Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFFC6FF3D),
+        );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,

@@ -5,7 +5,9 @@ import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
 
-final favoriteRepositoryProvider = Provider((ref) => FavoriteRepository(ref.read(dioProvider)));
+final favoriteRepositoryProvider = Provider(
+  (ref) => FavoriteRepository(ref.read(dioProvider)),
+);
 
 class FavoriteRepository {
   final Dio _dio;

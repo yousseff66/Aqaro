@@ -7,10 +7,12 @@ class SendNotificationScreen extends ConsumerStatefulWidget {
   const SendNotificationScreen({super.key});
 
   @override
-  ConsumerState<SendNotificationScreen> createState() => _SendNotificationScreenState();
+  ConsumerState<SendNotificationScreen> createState() =>
+      _SendNotificationScreenState();
 }
 
-class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen> {
+class _SendNotificationScreenState
+    extends ConsumerState<SendNotificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
@@ -38,7 +40,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('تأكيد الإرسال'),
-        content: Text('هل أنت متأكد من إرسال هذا الإشعار لـ "${_categoryLabels[_category]}"؟'),
+        content: Text(
+          'هل أنت متأكد من إرسال هذا الإشعار لـ "${_categoryLabels[_category]}"؟',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -57,7 +61,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
     setState(() => _isLoading = true);
 
     try {
-      final result = await ref.read(adminRepositoryProvider).sendPushNotification(
+      final result = await ref
+          .read(adminRepositoryProvider)
+          .sendPushNotification(
             title: _titleController.text.trim(),
             body: _bodyController.text.trim(),
             category: _category,
@@ -66,14 +72,16 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
       if (mounted) {
         final successCount = result['successCount'] ?? 0;
         final failureCount = result['failureCount'] ?? 0;
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تم الإرسال بنجاح لـ $successCount جهاز، فشل الإرسال لـ $failureCount أجهزة'),
+            content: Text(
+              'تم الإرسال بنجاح لـ $successCount جهاز، فشل الإرسال لـ $failureCount أجهزة',
+            ),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         _titleController.clear();
         _bodyController.clear();
       }
@@ -96,64 +104,62 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DropdownButtonFormField<String>(
-                value: _category,
-                decoration: const InputDecoration(
-                  labelText: 'الفئة المستهدفة',
-                  border: OutlineInputBorder(),
-                ),
-                items: _categoryLabels.entries.map((e) {
-                  return DropdownMenuItem(
-                    value: e.key,
-                    child: Text(e.value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) setState(() => _category = value);
-                },
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropdownButtonFormField<String>(
+              value: _category,
+              decoration: const InputDecoration(
+                labelText: 'الفئة المستهدفة',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'عنوان الإشعار',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    (value == null || value.isEmpty) ? 'العنوان مطلوب' : null,
-                onChanged: (_) => setState(() {}),
+              items: _categoryLabels.entries.map((e) {
+                return DropdownMenuItem(value: e.key, child: Text(e.value));
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) setState(() => _category = value);
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: 'عنوان الإشعار',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _bodyController,
-                decoration: const InputDecoration(
-                  labelText: 'محتوى الإشعار',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 4,
-                validator: (value) =>
-                    (value == null || value.isEmpty) ? 'المحتوى مطلوب' : null,
-                onChanged: (_) => setState(() {}),
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'العنوان مطلوب' : null,
+              onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _bodyController,
+              decoration: const InputDecoration(
+                labelText: 'محتوى الإشعار',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: (_isLoading ||
-                        _titleController.text.isEmpty ||
-                        _bodyController.text.isEmpty)
-                    ? null
-                    : _sendNotification,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('إرسال الإشعار', style: TextStyle(fontSize: 16)),
+              maxLines: 4,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'المحتوى مطلوب' : null,
+              onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed:
+                  (_isLoading ||
+                      _titleController.text.isEmpty ||
+                      _bodyController.text.isEmpty)
+                  ? null
+                  : _sendNotification,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-            ],
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text('إرسال الإشعار', style: TextStyle(fontSize: 16)),
+            ),
+          ],
         ),
       ),
     );

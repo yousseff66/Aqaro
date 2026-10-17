@@ -9,7 +9,8 @@ class ReportPropertyDialog extends ConsumerStatefulWidget {
   const ReportPropertyDialog({super.key, required this.propertyId});
 
   @override
-  ConsumerState<ReportPropertyDialog> createState() => _ReportPropertyDialogState();
+  ConsumerState<ReportPropertyDialog> createState() =>
+      _ReportPropertyDialogState();
 }
 
 class _ReportPropertyDialogState extends ConsumerState<ReportPropertyDialog> {
@@ -34,7 +35,9 @@ class _ReportPropertyDialogState extends ConsumerState<ReportPropertyDialog> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      await ref.read(reportProvider.notifier).submitReport(
+      await ref
+          .read(reportProvider.notifier)
+          .submitReport(
             propertyId: widget.propertyId,
             reason: _selectedReason,
             description: _descriptionController.text.trim(),
@@ -44,7 +47,9 @@ class _ReportPropertyDialogState extends ConsumerState<ReportPropertyDialog> {
         if (!state.hasError) {
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.translate('report_submitted_successfully'))),
+            SnackBar(
+              content: Text(context.translate('report_submitted_successfully')),
+            ),
           );
         }
       }
@@ -90,7 +95,9 @@ class _ReportPropertyDialogState extends ConsumerState<ReportPropertyDialog> {
                   hintText: context.translate('report_description_hint'),
                 ),
                 maxLines: 3,
-                textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+                textAlign: Directionality.of(context) == TextDirection.rtl
+                    ? TextAlign.right
+                    : TextAlign.left,
               ),
             ],
           ),

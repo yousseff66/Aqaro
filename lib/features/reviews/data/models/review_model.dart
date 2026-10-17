@@ -19,19 +19,23 @@ class Review {
     String pId = '';
     if (json['property'] is String) {
       pId = json['property'] as String;
-    } else if (json['property'] != null && json['property'] is Map<String, dynamic>) {
+    } else if (json['property'] != null &&
+        json['property'] is Map<String, dynamic>) {
       pId = (json['property'] as Map<String, dynamic>)['_id'] as String? ?? '';
     }
 
     return Review(
       id: json['_id'] as String?,
       propertyId: pId,
-      reviewer: json['reviewer'] != null && json['reviewer'] is Map<String, dynamic>
+      reviewer:
+          json['reviewer'] != null && json['reviewer'] is Map<String, dynamic>
           ? ReviewerInfo.fromJson(json['reviewer'] as Map<String, dynamic>)
           : null,
       rating: json['rating'] as int? ?? 0,
       comment: json['comment'] as String? ?? '',
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'] as String) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
     );
   }
 }

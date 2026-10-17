@@ -28,7 +28,11 @@ class BottomNavBar extends ConsumerWidget {
         indicatorColor: AppColors.lime500,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const TextStyle(color: AppColors.carbon900, fontWeight: FontWeight.bold, fontSize: 12);
+            return const TextStyle(
+              color: AppColors.carbon900,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            );
           }
           return const TextStyle(color: AppColors.muted, fontSize: 12);
         }),
@@ -52,7 +56,9 @@ class BottomNavBar extends ConsumerWidget {
           }
           onTap(index);
         },
-        destinations: isHosting ? _buildHostingDestinations(context) : _buildRentingDestinations(context),
+        destinations: isHosting
+            ? _buildHostingDestinations(context)
+            : _buildRentingDestinations(context),
       ),
     );
   }

@@ -1,12 +1,13 @@
 class ApiConstants {
   static const String baseUrl = 'https://api.aqaroeg.com/api';
-  
+
   // Auth
   static const String login = '/auth/login';
   static const String register = '/auth/register';
   static const String me = '/auth/me';
   static const String forgotPassword = '/auth/forgot-password';
   static const String resetPassword = '/auth/reset-password';
+  static const String resetPasswordByPhone = '/auth/reset-password-by-phone';
   static const String updatePhone = '/users/me/phone';
   static const String deleteAccount = '/users/me';
 

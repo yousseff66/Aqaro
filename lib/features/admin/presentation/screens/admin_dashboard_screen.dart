@@ -16,167 +16,199 @@ class AdminDashboardScreen extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () => ref.refresh(adminStatsProvider.future),
       child: statsAsync.when(
-          data: (stats) => SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.translate('overview') ?? 'Overview',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        data: (stats) => SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.translate('overview') ?? 'Overview',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(range.start != null
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.calendar_today, size: 16),
+                      label: Text(
+                        range.start != null
                             ? intl.DateFormat('dd/MM/yyyy').format(range.start!)
-                            : (context.translate('start_date') ?? 'Start Date')),
-                        onPressed: () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate: range.start ?? DateTime.now(),
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime.now(),
-                          );
-                          if (picked != null) {
-                            ref.read(dashboardDateRangeProvider.notifier).state =
-                                DashboardDateRange(start: picked, end: range.end);
-                          }
-                        },
+                            : (context.translate('start_date') ?? 'Start Date'),
                       ),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: range.start ?? DateTime.now(),
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          ref.read(dashboardDateRangeProvider.notifier).state =
+                              DashboardDateRange(start: picked, end: range.end);
+                        }
+                      },
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(range.end != null
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.calendar_today, size: 16),
+                      label: Text(
+                        range.end != null
                             ? intl.DateFormat('dd/MM/yyyy').format(range.end!)
-                            : (context.translate('end_date') ?? 'End Date')),
-                        onPressed: () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate: range.end ?? DateTime.now(),
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime.now(),
+                            : (context.translate('end_date') ?? 'End Date'),
+                      ),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: range.end ?? DateTime.now(),
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          ref
+                              .read(dashboardDateRangeProvider.notifier)
+                              .state = DashboardDateRange(
+                            start: range.start,
+                            end: picked,
                           );
-                          if (picked != null) {
-                            ref.read(dashboardDateRangeProvider.notifier).state =
-                                DashboardDateRange(start: range.start, end: picked);
-                          }
-                        },
-                      ),
+                        }
+                      },
                     ),
-                    if (range.start != null || range.end != null)
-                      IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () => ref.read(dashboardDateRangeProvider.notifier).state =
-                            const DashboardDateRange(),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.5,
-                  children: [
-                    _StatCard(
-                      title: context.translate('total_users') ?? 'Total Users',
-                      value: stats.totalUsers.toString(),
-                      icon: Icons.people,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    _StatCard(
-                      title: context.translate('properties') ?? 'Properties',
-                      value: stats.totalProperties.toString(),
-                      icon: Icons.home,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    _StatCard(
-                      title: context.translate('pending') ?? 'Pending Properties',
-                      value: stats.pendingProperties.toString(),
-                      icon: Icons.pending_actions,
-                      color: Colors.orange,
-                    ),
-                    _StatCard(
-                      title: context.translate('pending_payments') ?? 'Pending Payments',
-                      value: stats.pendingPayments.toString(),
-                      icon: Icons.payment,
-                      color: Colors.orange,
-                    ),
-                    _StatCard(
-                      title: context.translate('revenue') ?? 'Revenue',
-                      value: '${stats.totalRevenue.toStringAsFixed(0)} ${context.translate('egp')}',
-                      icon: Icons.attach_money,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    _StatCard(
-                      title: context.translate('active_reports') ?? 'Active Reports',
-                      value: stats.activeReports.toString(),
-                      icon: Icons.report,
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  context.translate('quick_actions') ?? 'Quick Actions',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.orange,
-                    child: Icon(Icons.approval, color: Colors.white),
                   ),
-                  title: Text(context.translate('review_pending_listings') ?? 'Review Pending Listings'),
-                  subtitle: Text('${stats.pendingProperties} ${context.translate('properties_waiting_approval')}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Navigate to Pending Listings
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.red,
-                    child: Icon(Icons.report, color: Colors.white),
+                  if (range.start != null || range.end != null)
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () =>
+                          ref.read(dashboardDateRangeProvider.notifier).state =
+                              const DashboardDateRange(),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.5,
+                children: [
+                  _StatCard(
+                    title: context.translate('total_users') ?? 'Total Users',
+                    value: stats.totalUsers.toString(),
+                    icon: Icons.people,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                  title: Text(context.translate('property_reports') ?? 'Property Reports'),
-                  subtitle: Text('${stats.activeReports} ${context.translate('active_reports_description') ?? 'Active reports'}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Navigate to Reports
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Icon(Icons.support_agent, color: Colors.white),
+                  _StatCard(
+                    title: context.translate('properties') ?? 'Properties',
+                    value: stats.totalProperties.toString(),
+                    icon: Icons.home,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  title: Text(context.translate('support_messages') ?? 'رسائل الدعم الفني'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SupportMessagesScreen()),
-                    );
-                  },
+                  _StatCard(
+                    title: context.translate('pending') ?? 'Pending Properties',
+                    value: stats.pendingProperties.toString(),
+                    icon: Icons.pending_actions,
+                    color: Colors.orange,
+                  ),
+                  _StatCard(
+                    title:
+                        context.translate('pending_payments') ??
+                        'Pending Payments',
+                    value: stats.pendingPayments.toString(),
+                    icon: Icons.payment,
+                    color: Colors.orange,
+                  ),
+                  _StatCard(
+                    title: context.translate('revenue') ?? 'Revenue',
+                    value:
+                        '${stats.totalRevenue.toStringAsFixed(0)} ${context.translate('egp')}',
+                    icon: Icons.attach_money,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  _StatCard(
+                    title:
+                        context.translate('active_reports') ?? 'Active Reports',
+                    value: stats.activeReports.toString(),
+                    icon: Icons.report,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                context.translate('quick_actions') ?? 'Quick Actions',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Colors.orange,
+                  child: Icon(Icons.approval, color: Colors.white),
+                ),
+                title: Text(
+                  context.translate('review_pending_listings') ??
+                      'Review Pending Listings',
+                ),
+                subtitle: Text(
+                  '${stats.pendingProperties} ${context.translate('properties_waiting_approval')}',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  // Navigate to Pending Listings
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Icon(Icons.report, color: Colors.white),
+                ),
+                title: Text(
+                  context.translate('property_reports') ?? 'Property Reports',
+                ),
+                subtitle: Text(
+                  '${stats.activeReports} ${context.translate('active_reports_description') ?? 'Active reports'}',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  // Navigate to Reports
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: Icon(Icons.support_agent, color: Colors.white),
+                ),
+                title: Text(
+                  context.translate('support_messages') ?? 'رسائل الدعم الفني',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SupportMessagesScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Error: $e')),
         ),
-      );
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+      ),
+    );
   }
 }
 

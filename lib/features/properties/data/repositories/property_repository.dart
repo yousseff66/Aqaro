@@ -5,7 +5,9 @@ import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/properties/data/models/property_model.dart';
 
-final propertyRepositoryProvider = Provider((ref) => PropertyRepository(ref.read(dioProvider)));
+final propertyRepositoryProvider = Provider(
+  (ref) => PropertyRepository(ref.read(dioProvider)),
+);
 
 class PropertyRepository {
   final Dio _dio;
@@ -41,7 +43,10 @@ class PropertyRepository {
       if (listingPurpose != null) 'listingPurpose': listingPurpose,
     };
 
-    final response = await _dio.get(ApiConstants.properties, queryParameters: queryParameters);
+    final response = await _dio.get(
+      ApiConstants.properties,
+      queryParameters: queryParameters,
+    );
 
     final data = response.data;
     List results = [];
@@ -91,25 +96,33 @@ class PropertyRepository {
 
   // تحديث الحقول النصية فقط (مش الصور) - PATCH /properties/:id
   Future<Property> updateProperty(String id, Map<String, dynamic> data) async {
-    final response = await _dio.patch('${ApiConstants.properties}/$id', data: data);
+    final response = await _dio.patch(
+      '${ApiConstants.properties}/$id',
+      data: data,
+    );
     return Property.fromJson(response.data);
   }
 
   // تحديث الصور فقط (إضافة جديدة + حذف قديمة) - PATCH /properties/:id/images
   // ده endpoint منفصل تمامًا عن updateProperty، زي ما الباك متوقع بالظبط
   Future<Property> updatePropertyImages(
-      String id, {
-        required List<MultipartFile> newImages,
-        required List<String> removedImagePublicIds,
-      }) async {
+    String id, {
+    required List<MultipartFile> newImages,
+    required List<String> removedImagePublicIds,
+  }) async {
     final formData = FormData();
     if (removedImagePublicIds.isNotEmpty) {
-      formData.fields.add(MapEntry('removedImages', jsonEncode(removedImagePublicIds)));
+      formData.fields.add(
+        MapEntry('removedImages', jsonEncode(removedImagePublicIds)),
+      );
     }
     for (final img in newImages) {
       formData.files.add(MapEntry('images', img));
     }
-    final response = await _dio.patch('${ApiConstants.properties}/$id/images', data: formData);
+    final response = await _dio.patch(
+      '${ApiConstants.properties}/$id/images',
+      data: formData,
+    );
     return Property.fromJson(response.data);
   }
 

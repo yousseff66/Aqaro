@@ -36,7 +36,7 @@ class PropertyDetailScreen extends ConsumerWidget {
 
     return propertyAsync.when(
       data: (property) => _PropertyDetailContent(property: property),
-      loading: () => initialProperty != null 
+      loading: () => initialProperty != null
           ? _PropertyDetailContent(property: initialProperty!)
           : const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
@@ -53,10 +53,12 @@ class _PropertyDetailContent extends ConsumerStatefulWidget {
   const _PropertyDetailContent({required this.property});
 
   @override
-  ConsumerState<_PropertyDetailContent> createState() => _PropertyDetailContentState();
+  ConsumerState<_PropertyDetailContent> createState() =>
+      _PropertyDetailContentState();
 }
 
-class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> {
+class _PropertyDetailContentState
+    extends ConsumerState<_PropertyDetailContent> {
   int _currentIndex = 0;
   final PageController _pageController = PageController();
 
@@ -90,7 +92,11 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                           },
                           itemBuilder: (context, index) {
                             return GestureDetector(
-                              onTap: () => _showFullScreenImages(context, property.images, index),
+                              onTap: () => _showFullScreenImages(
+                                context,
+                                property.images,
+                                index,
+                              ),
                               child: Hero(
                                 tag: 'property_image_$index',
                                 child: Image.network(
@@ -123,9 +129,19 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                                 ),
                                 onPressed: () {
                                   if (AppFormatters.isRTL(context)) {
-                                    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                    _pageController.nextPage(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                    );
                                   } else {
-                                    _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                    _pageController.previousPage(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                    );
                                   }
                                 },
                               ),
@@ -151,9 +167,19 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                                 ),
                                 onPressed: () {
                                   if (AppFormatters.isRTL(context)) {
-                                    _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                    _pageController.previousPage(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                    );
                                   } else {
-                                    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                    _pageController.nextPage(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                    );
                                   }
                                 },
                               ),
@@ -193,12 +219,14 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                                   property.images.length,
                                   (index) => AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 3,
+                                    ),
                                     height: 6,
                                     width: _currentIndex == index ? 20 : 6,
                                     decoration: BoxDecoration(
-                                      color: _currentIndex == index 
-                                          ? AppColors.lime500 
+                                      color: _currentIndex == index
+                                          ? AppColors.lime500
                                           : Colors.white.withOpacity(0.6),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -209,12 +237,17 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                           ),
                       ],
                     )
-                  : Container(color: Colors.grey[300], child: const Icon(Icons.image, size: 100)),
+                  : Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, size: 100),
+                    ),
             ),
             actions: [
               Consumer(
                 builder: (context, ref, _) {
-                  final isFavorite = ref.watch(favoriteIdsProvider).contains(property.id);
+                  final isFavorite = ref
+                      .watch(favoriteIdsProvider)
+                      .contains(property.id);
                   return IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -227,7 +260,9 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                         return;
                       }
                       if (property.id != null) {
-                        ref.read(favoriteToggleProvider.notifier).toggle(property.id!, isFavorite);
+                        ref
+                            .read(favoriteToggleProvider.notifier)
+                            .toggle(property.id!, isFavorite);
                       }
                     },
                   );
@@ -236,7 +271,8 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
-                  final String text = '${property.title}\n'
+                  final String text =
+                      '${property.title}\n'
                       '${AppFormatters.formatCurrency(property.price)} ${context.translate('egp')}\n'
                       '${property.city}, ${property.governorate}\n'
                       'https://aqaroeg.com/property/${property.id}';
@@ -253,7 +289,8 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                     }
                     showDialog(
                       context: context,
-                      builder: (context) => ReportPropertyDialog(propertyId: property.id!),
+                      builder: (context) =>
+                          ReportPropertyDialog(propertyId: property.id!),
                     );
                   }
                 },
@@ -262,7 +299,10 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                     value: 'report',
                     child: Row(
                       children: [
-                        const Icon(Icons.report_problem_outlined, color: Colors.red),
+                        const Icon(
+                          Icons.report_problem_outlined,
+                          color: Colors.red,
+                        ),
                         const SizedBox(width: 8),
                         Text(context.translate('report_property')),
                       ],
@@ -280,7 +320,10 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                 children: [
                   if (property.isFeatured) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.gold,
                         borderRadius: BorderRadius.circular(6),
@@ -295,7 +338,11 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.stars, color: AppColors.onGold, size: 16),
+                          const Icon(
+                            Icons.stars,
+                            color: AppColors.onGold,
+                            size: 16,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             context.translate('featured').toUpperCase(),
@@ -315,7 +362,8 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                     children: [
                       Text(
                         '${AppFormatters.formatCurrency(property.price)} ${context.translate('egp')}',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.bold,
                             ),
@@ -323,13 +371,17 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                       Row(
                         children: [
                           Icon(
-                            property.listingPurpose?.toLowerCase() == 'sale' ? Icons.sell_outlined : Icons.calendar_month_outlined,
+                            property.listingPurpose?.toLowerCase() == 'sale'
+                                ? Icons.sell_outlined
+                                : Icons.calendar_month_outlined,
                             size: 16,
                             color: AppColors.muted,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            context.translate(property.listingPurpose?.toLowerCase() ?? 'sale'),
+                            context.translate(
+                              property.listingPurpose?.toLowerCase() ?? 'sale',
+                            ),
                             style: const TextStyle(
                               color: AppColors.muted,
                               fontWeight: FontWeight.w600,
@@ -343,21 +395,40 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                   const SizedBox(height: 8),
                   Text(
                     property.title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
-                      Text('${property.city}, ${property.governorate}', style: const TextStyle(color: Colors.grey)),
+                      Text(
+                        '${property.city}, ${property.governorate}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                       if (property.publishedAt != null) ...[
                         const Spacer(),
-                        const Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey),
+                        const Icon(
+                          Icons.calendar_today_outlined,
+                          size: 14,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 4),
                         Text(
-                          DateFormat('dd/MM/yyyy', 'en_US').format(property.publishedAt!),
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          DateFormat(
+                            'dd/MM/yyyy',
+                            'en_US',
+                          ).format(property.publishedAt!),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ],
@@ -366,21 +437,58 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _FeatureItem(icon: Icons.king_bed_outlined, label: '${property.bedrooms} ${context.translate('beds')}'),
-                      _FeatureItem(icon: Icons.bathtub_outlined, label: '${property.bathrooms} ${context.translate('baths')}'),
-                      _FeatureItem(icon: Icons.square_foot, label: '${AppFormatters.formatNumber(property.area)} ${context.translate('area_unit') ?? 'm²'}'),
-                      if (property.floor != null) _FeatureItem(icon: Icons.layers_outlined, label: '${context.translate('floor')} ${property.floor}'),
-                      if (property.furnished) _FeatureItem(icon: Icons.chair_outlined, label: context.translate('furnished')),
+                      _FeatureItem(
+                        icon: Icons.king_bed_outlined,
+                        label:
+                            '${property.bedrooms} ${context.translate('beds')}',
+                      ),
+                      _FeatureItem(
+                        icon: Icons.bathtub_outlined,
+                        label:
+                            '${property.bathrooms} ${context.translate('baths')}',
+                      ),
+                      _FeatureItem(
+                        icon: Icons.square_foot,
+                        label:
+                            '${AppFormatters.formatNumber(property.area)} ${context.translate('area_unit') ?? 'm²'}',
+                      ),
+                      if (property.floor != null)
+                        _FeatureItem(
+                          icon: Icons.layers_outlined,
+                          label:
+                              '${context.translate('floor')} ${property.floor}',
+                        ),
+                      if (property.furnished)
+                        _FeatureItem(
+                          icon: Icons.chair_outlined,
+                          label: context.translate('furnished'),
+                        ),
                     ],
                   ),
                   const Divider(height: 48),
-                  Text(context.translate('description'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    context.translate('description'),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  Text(property.description, style: const TextStyle(height: 1.5)),
+                  Text(
+                    property.description,
+                    style: const TextStyle(height: 1.5),
+                  ),
                   const Divider(height: 48),
-                  Text(context.translate('location'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    context.translate('location'),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  if (property.location.coordinates[0] == 0.0 && property.location.coordinates[1] == 0.0)
+                  if (property.location.coordinates[0] == 0.0 &&
+                      property.location.coordinates[1] == 0.0)
                     Container(
                       height: 200,
                       width: double.infinity,
@@ -391,15 +499,25 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.location_off, size: 48, color: Colors.grey),
+                          const Icon(
+                            Icons.location_off,
+                            size: 48,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 8),
-                          Text(context.translate('location_not_available') ?? 'Location not available'),
+                          Text(
+                            context.translate('location_not_available') ??
+                                'Location not available',
+                          ),
                         ],
                       ),
                     )
                   else
                     GestureDetector(
-                      onTap: () => _openInMaps(property.location.coordinates[1], property.location.coordinates[0]),
+                      onTap: () => _openInMaps(
+                        property.location.coordinates[1],
+                        property.location.coordinates[0],
+                      ),
                       child: SizedBox(
                         height: 200,
                         child: ClipRRect(
@@ -408,27 +526,41 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                             children: [
                               GoogleMap(
                                 initialCameraPosition: CameraPosition(
-                                  target: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
+                                  target: LatLng(
+                                    property.location.coordinates[1],
+                                    property.location.coordinates[0],
+                                  ),
                                   zoom: 14,
                                 ),
                                 markers: property.showExactLocation
                                     ? {
                                         Marker(
                                           markerId: const MarkerId('property'),
-                                          position: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
-                                        )
+                                          position: LatLng(
+                                            property.location.coordinates[1],
+                                            property.location.coordinates[0],
+                                          ),
+                                        ),
                                       }
                                     : {},
                                 circles: !property.showExactLocation
                                     ? {
                                         Circle(
                                           circleId: const CircleId('area'),
-                                          center: LatLng(property.location.coordinates[1], property.location.coordinates[0]),
+                                          center: LatLng(
+                                            property.location.coordinates[1],
+                                            property.location.coordinates[0],
+                                          ),
                                           radius: 500,
-                                          fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                                          fillColor: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withOpacity(0.3),
                                           strokeWidth: 2,
-                                          strokeColor: Theme.of(context).colorScheme.secondary,
-                                        )
+                                          strokeColor: Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ),
                                       }
                                     : {},
                                 scrollGesturesEnabled: false,
@@ -443,7 +575,10 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                                 bottom: 8,
                                 right: 8,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.black54,
                                     borderRadius: BorderRadius.circular(4),
@@ -451,11 +586,19 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.open_in_new, color: Colors.white, size: 12),
+                                      const Icon(
+                                        Icons.open_in_new,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        context.translate('open_in_maps') ?? 'Open in Maps',
-                                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                                        context.translate('open_in_maps') ??
+                                            'Open in Maps',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -467,7 +610,10 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                       ),
                     ),
                   const SizedBox(height: 32),
-                  _OwnerCard(owner: property.owner, propertyId: property.id ?? ''),
+                  _OwnerCard(
+                    owner: property.owner,
+                    propertyId: property.id ?? '',
+                  ),
                   const SizedBox(height: 100), // Space for bottom button
                 ],
               ),
@@ -479,7 +625,13 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -489,7 +641,9 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
                 icon: const Icon(Icons.chat),
                 label: Text(context.translate('whatsapp')),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366), // Standard WhatsApp Green
+                  backgroundColor: const Color(
+                    0xFF25D366,
+                  ), // Standard WhatsApp Green
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -498,7 +652,8 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => launchUrl(Uri.parse('tel:${property.owner?.phone}')),
+                onPressed: () =>
+                    launchUrl(Uri.parse('tel:${property.owner?.phone}')),
                 icon: const Icon(Icons.phone),
                 label: Text(context.translate('call')),
               ),
@@ -524,11 +679,16 @@ class _PropertyDetailContentState extends ConsumerState<_PropertyDetailContent> 
     }
   }
 
-  void _showFullScreenImages(BuildContext context, List<String> images, int initialIndex) {
+  void _showFullScreenImages(
+    BuildContext context,
+    List<String> images,
+    int initialIndex,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => _FullScreenGallery(images: images, initialIndex: initialIndex),
+        builder: (context) =>
+            _FullScreenGallery(images: images, initialIndex: initialIndex),
       ),
     );
   }
@@ -562,7 +722,10 @@ class _FullScreenGalleryState extends State<_FullScreenGallery> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: Text('${_currentIndex + 1} / ${widget.images.length}', style: const TextStyle(color: Colors.white)),
+        title: Text(
+          '${_currentIndex + 1} / ${widget.images.length}',
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: PageView.builder(
         controller: _controller,
@@ -575,10 +738,7 @@ class _FullScreenGalleryState extends State<_FullScreenGallery> {
             child: Center(
               child: Hero(
                 tag: 'property_image_$index',
-                child: Image.network(
-                  widget.images[index],
-                  fit: BoxFit.contain,
-                ),
+                child: Image.network(widget.images[index], fit: BoxFit.contain),
               ),
             ),
           );
@@ -600,7 +760,10 @@ class _FeatureItem extends StatelessWidget {
       children: [
         Icon(icon, color: Theme.of(context).colorScheme.secondary),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
@@ -625,27 +788,45 @@ class _OwnerCard extends ConsumerWidget {
           CircleAvatar(
             radius: 25,
             backgroundColor: Theme.of(context).colorScheme.secondary,
-            child: Text(owner?.name?[0] ?? 'O', style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
+            child: Text(
+              owner?.name?[0] ?? 'O',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(owner?.name ?? context.translate('property_owner'),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  owner?.name ?? context.translate('property_owner'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 if (owner?.id != null) ...[
                   const SizedBox(height: 4),
                   Consumer(
                     builder: (context, ref, _) {
-                      final ratingAsync = ref.watch(userRatingProvider(owner!.id));
+                      final ratingAsync = ref.watch(
+                        userRatingProvider(owner!.id),
+                      );
                       return ratingAsync.when(
                         data: (rating) => Row(
                           children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
                             const SizedBox(width: 4),
-                            Text('${(rating['average'] as num).toStringAsFixed(1)} (${rating['count']})',
-                                style: const TextStyle(fontSize: 12)),
+                            Text(
+                              '${(rating['average'] as num).toStringAsFixed(1)} (${rating['count']})',
+                              style: const TextStyle(fontSize: 12),
+                            ),
                           ],
                         ),
                         loading: () => const SizedBox.shrink(),
@@ -657,8 +838,10 @@ class _OwnerCard extends ConsumerWidget {
                 if (owner?.isVerified == true)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Text(context.translate('verified_owner'),
-                        style: const TextStyle(color: Colors.green, fontSize: 12)),
+                    child: Text(
+                      context.translate('verified_owner'),
+                      style: const TextStyle(color: Colors.green, fontSize: 12),
+                    ),
                   ),
               ],
             ),
@@ -672,7 +855,9 @@ class _OwnerCard extends ConsumerWidget {
                     : () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => OwnerProfileScreen(owner: owner!)),
+                          MaterialPageRoute(
+                            builder: (_) => OwnerProfileScreen(owner: owner!),
+                          ),
                         );
                       },
                 child: Text(context.translate('view_profile')),
@@ -690,7 +875,10 @@ class _OwnerCard extends ConsumerWidget {
                         }
                         showDialog(
                           context: context,
-                          builder: (_) => AddReviewDialog(propertyId: propertyId, ownerId: owner!.id),
+                          builder: (_) => AddReviewDialog(
+                            propertyId: propertyId,
+                            ownerId: owner!.id,
+                          ),
                         );
                       },
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/core/localization/app_localizations.dart';
 import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sakan_app/features/auth/presentation/screens/otp_verification_screen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -13,7 +14,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _obscurePassword = true;
@@ -21,7 +21,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
     super.dispose();
@@ -29,12 +28,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _register() {
     if (_formKey.currentState!.validate()) {
-      ref.read(authProvider.notifier).register(
-            _nameController.text.trim(),
-            _emailController.text.trim(),
-            _passwordController.text,
-            _phoneController.text.trim(),
-          );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpVerificationScreen(
+            phone: _phoneController.text.trim(),
+            mode: OtpMode.register,
+            name: _nameController.text.trim(),
+            password: _passwordController.text,
+          ),
+        ),
+      );
     }
   }
 
@@ -54,7 +58,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     // the MainScreen logic in main.dart will handle the redirection.
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.translate('create_account') ?? 'Create Account')),
+      appBar: AppBar(
+        title: Text(context.translate('create_account') ?? 'Create Account'),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -73,8 +79,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 Text(
                   context.translate('join_sakan') ?? 'Join Aqaro',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
@@ -85,20 +91,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     prefixIcon: const Icon(Icons.person_outline),
                     border: const OutlineInputBorder(),
                   ),
-                  validator: (value) =>
-                      (value == null || value.isEmpty) ? context.translate('please_enter_name') : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: context.translate('email'),
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    border: const OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      (value == null || !value.contains('@')) ? context.translate('enter_valid_email') : null,
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? context.translate('please_enter_name')
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -115,7 +110,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       return context.translate('required') ?? 'Required';
                     }
                     if (!RegExp(r'^01[0125][0-9]{8}$').hasMatch(value)) {
-                      return context.translate('invalid_egyptian_phone') ?? 'رقم غير صحيح، مثال: 01012345678';
+                      return context.translate('invalid_egyptian_phone') ??
+                          'رقم غير صحيح، مثال: 01012345678';
                     }
                     return null;
                   },
@@ -128,8 +124,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   obscureText: _obscurePassword,
@@ -138,10 +139,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       return context.translate('required') ?? 'Required';
                     }
                     if (value.length < 8) {
-                      return context.translate('password_min_length') ?? 'Password must be at least 8 characters';
+                      return context.translate('password_min_length') ??
+                          'Password must be at least 8 characters';
                     }
                     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                      return context.translate('password_needs_uppercase') ?? 'Password must contain at least one uppercase letter';
+                      return context.translate('password_needs_uppercase') ??
+                          'Password must contain at least one uppercase letter';
                     }
                     return null;
                   },
@@ -173,7 +176,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Text(
-                    context.translate('already_have_account') ?? 'Already have an account? Login',
+                    context.translate('already_have_account') ??
+                        'Already have an account? Login',
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),

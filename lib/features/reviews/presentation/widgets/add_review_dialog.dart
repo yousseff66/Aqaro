@@ -42,10 +42,14 @@ class _AddReviewDialogState extends ConsumerState<AddReviewDialog> {
   Future<void> _submit() async {
     if (_rating == 0) return;
 
-    await ref.read(reviewSubmitProvider.notifier).submit(
+    await ref
+        .read(reviewSubmitProvider.notifier)
+        .submit(
           propertyId: widget.propertyId,
           rating: _rating,
-          comment: _commentController.text.trim().isEmpty ? null : _commentController.text.trim(),
+          comment: _commentController.text.trim().isEmpty
+              ? null
+              : _commentController.text.trim(),
           ownerId: widget.ownerId,
         );
 
@@ -54,7 +58,12 @@ class _AddReviewDialogState extends ConsumerState<AddReviewDialog> {
       if (state is AsyncData) {
         Navigator.of(context).pop(true);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.translate('review_submitted_success') ?? 'Review submitted successfully')),
+          SnackBar(
+            content: Text(
+              context.translate('review_submitted_success') ??
+                  'Review submitted successfully',
+            ),
+          ),
         );
       }
     }
@@ -75,7 +84,9 @@ class _AddReviewDialogState extends ConsumerState<AddReviewDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
                 return IconButton(
-                  onPressed: isLoading ? null : () => setState(() => _rating = index + 1),
+                  onPressed: isLoading
+                      ? null
+                      : () => setState(() => _rating = index + 1),
                   icon: Icon(
                     index < _rating ? Icons.star : Icons.star_border,
                     color: Colors.amber,
@@ -89,9 +100,13 @@ class _AddReviewDialogState extends ConsumerState<AddReviewDialog> {
               controller: _commentController,
               enabled: !isLoading,
               maxLines: 3,
-              textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+              textAlign: Directionality.of(context) == TextDirection.rtl
+                  ? TextAlign.right
+                  : TextAlign.left,
               decoration: InputDecoration(
-                hintText: context.translate('write_comment') ?? 'Write your comment...',
+                hintText:
+                    context.translate('write_comment') ??
+                    'Write your comment...',
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -115,7 +130,11 @@ class _AddReviewDialogState extends ConsumerState<AddReviewDialog> {
         ElevatedButton(
           onPressed: isLoading || _rating == 0 ? null : _submit,
           child: isLoading
-              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
               : Text(context.translate('submit') ?? 'Submit'),
         ),
       ],

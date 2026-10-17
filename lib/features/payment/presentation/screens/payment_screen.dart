@@ -44,7 +44,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final paymentState = ref.watch(paymentProcessProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.translate('complete_payment') ?? 'Complete Payment')),
+      appBar: AppBar(
+        title: Text(
+          context.translate('complete_payment') ?? 'Complete Payment',
+        ),
+      ),
       body: settingsAsync.when(
         data: (settings) {
           double amount = settings.normalListingPrice;
@@ -77,24 +81,37 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 const SizedBox(height: 24),
 
                 // --- الخطوة 1: اختر طريقة الدفع ---
-                _buildStepHeader('1', context.translate('select_payment_method') ?? 'Select Payment Method'),
+                _buildStepHeader(
+                  '1',
+                  context.translate('select_payment_method') ??
+                      'Select Payment Method',
+                ),
                 const SizedBox(height: 12),
-                ...enabledMethods.map((method) => _buildMethodTile(method.key, method.value)),
+                ...enabledMethods.map(
+                  (method) => _buildMethodTile(method.key, method.value),
+                ),
 
                 // --- الخطوة 2: حوّل المبلغ ---
                 if (_selectedMethod != null) ...[
                   const SizedBox(height: 24),
-                  _buildStepHeader('2', context.translate('transfer_amount') ?? 'Transfer Amount'),
+                  _buildStepHeader(
+                    '2',
+                    context.translate('transfer_amount') ?? 'Transfer Amount',
+                  ),
                   const SizedBox(height: 12),
                   _buildTransferInstructions(amount, settings, context),
                 ],
 
                 // --- الخطوة 3: ارفع صورة الإيصال ---
                 const SizedBox(height: 24),
-                _buildStepHeader('3', context.translate('attach_receipt') ?? 'Attach Receipt'),
+                _buildStepHeader(
+                  '3',
+                  context.translate('attach_receipt') ?? 'Attach Receipt',
+                ),
                 const SizedBox(height: 8),
                 Text(
-                  context.translate('attach_receipt_hint') ?? 'After transferring, screenshot the receipt and upload here for verification',
+                  context.translate('attach_receipt_hint') ??
+                      'After transferring, screenshot the receipt and upload here for verification',
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 12),
@@ -107,8 +124,12 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _selectedMethod == null ? null : () => _handlePayment(amount),
-                      child: Text('${context.translate('pay')} ${AppFormatters.formatCurrency(amount)} ${context.translate('egp')}'),
+                      onPressed: _selectedMethod == null
+                          ? null
+                          : () => _handlePayment(amount),
+                      child: Text(
+                        '${context.translate('pay')} ${AppFormatters.formatCurrency(amount)} ${context.translate('egp')}',
+                      ),
                     ),
                   ),
               ],
@@ -116,7 +137,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('${context.translate('error')}: $e')),
+        error: (e, _) =>
+            Center(child: Text('${context.translate('error')}: $e')),
       ),
     );
   }
@@ -127,25 +149,44 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         CircleAvatar(
           radius: 14,
           backgroundColor: Theme.of(context).primaryColor,
-          child: Text(number, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+          child: Text(
+            number,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
         ),
         const SizedBox(width: 10),
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
 
-  Widget _buildTransferInstructions(double amount, dynamic settings, BuildContext context) {
+  Widget _buildTransferInstructions(
+    double amount,
+    dynamic settings,
+    BuildContext context,
+  ) {
     // احضر رقم الحساب حسب طريقة الدفع
     String? accountNumber;
     String? accountName;
     if (_selectedMethod != null) {
       final methodKey = _selectedMethod!.toLowerCase();
       if (methodKey == 'vodafonecash' || methodKey == 'vodafone') {
-        accountNumber = settings?.paymentMethods['vodafoneCash']?.number ?? settings?.paymentMethods.entries
-            .firstWhere((e) => e.key.toLowerCase().contains('vodafone'), orElse: () => MapEntry('', null))
-            .value
-            ?.number;
+        accountNumber =
+            settings?.paymentMethods['vodafoneCash']?.number ??
+            settings?.paymentMethods.entries
+                .firstWhere(
+                  (e) => e.key.toLowerCase().contains('vodafone'),
+                  orElse: () => MapEntry('', null),
+                )
+                .value
+                ?.number;
       } else if (methodKey == 'instapay') {
         accountNumber = settings?.paymentMethods['instaPay']?.number;
         accountName = settings?.paymentMethods['instaPay']?.name;
@@ -169,17 +210,26 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           if (accountNumber != null && accountNumber.isNotEmpty) ...[
             Text(
               context.translate('transfer_to') ?? 'حوّل على:',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade800,
+              ),
             ),
             const SizedBox(height: 8),
             if (accountName != null && accountName.isNotEmpty)
-              Text(accountName, style: TextStyle(fontSize: 13, color: Colors.blue.shade700)),
+              Text(
+                accountName,
+                style: TextStyle(fontSize: 13, color: Colors.blue.shade700),
+              ),
             const SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -187,7 +237,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                     ),
                     child: Text(
                       accountNumber,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -198,7 +252,12 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   onPressed: () {
                     // نسخ الرقم للكليبورد
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(context.translate('copied') ?? 'تم النسخ ✓'), duration: const Duration(seconds: 2)),
+                      SnackBar(
+                        content: Text(
+                          context.translate('copied') ?? 'تم النسخ ✓',
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ),
                     );
                   },
                 ),
@@ -210,11 +269,18 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.translate('amount_to_transfer') ?? 'المبلغ المطلوب تحويله:',
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                context.translate('amount_to_transfer') ??
+                    'المبلغ المطلوب تحويله:',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               Text(
                 '${AppFormatters.formatCurrency(amount)} ${context.translate('egp') ?? 'ج.م'}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ],
           ),
@@ -225,10 +291,24 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          _buildStep('1️⃣', context.translate('step_open_app') ?? 'افتح تطبيق البنك أو المحفظة'),
-          _buildStep('2️⃣', context.translate('step_transfer') ?? 'حوّل المبلغ على الرقم المذكور'),
-          _buildStep('3️⃣', context.translate('step_screenshot') ?? 'صوّر شاشة نجاح التحويل'),
-          _buildStep('4️⃣', context.translate('step_upload') ?? 'ارفع صورة الإيصال في الخانة أسفل'),
+          _buildStep(
+            '1️⃣',
+            context.translate('step_open_app') ?? 'افتح تطبيق البنك أو المحفظة',
+          ),
+          _buildStep(
+            '2️⃣',
+            context.translate('step_transfer') ??
+                'حوّل المبلغ على الرقم المذكور',
+          ),
+          _buildStep(
+            '3️⃣',
+            context.translate('step_screenshot') ?? 'صوّر شاشة نجاح التحويل',
+          ),
+          _buildStep(
+            '4️⃣',
+            context.translate('step_upload') ??
+                'ارفع صورة الإيصال في الخانة أسفل',
+          ),
         ],
       ),
     );
@@ -286,22 +366,36 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               height: 150,
               width: double.infinity,
               decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor, style: BorderStyle.solid, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).primaryColor,
+                  style: BorderStyle.solid,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(12),
                 color: Theme.of(context).primaryColor.withOpacity(0.05),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo_outlined, size: 48, color: Theme.of(context).primaryColor),
+                  Icon(
+                    Icons.add_a_photo_outlined,
+                    size: 48,
+                    color: Theme.of(context).primaryColor,
+                  ),
                   const SizedBox(height: 12),
                   Text(
-                    context.translate('add_receipt_image') ?? 'اضغط لإضافة صورة الإيصال',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                    context.translate('add_receipt_image') ??
+                        'اضغط لإضافة صورة الإيصال',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    context.translate('add_receipt_hint') ?? 'صورة من الجاليري أو الكاميرا',
+                    context.translate('add_receipt_hint') ??
+                        'صورة من الجاليري أو الكاميرا',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
@@ -322,7 +416,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(context.translate('property')),
-                Text(widget.property.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  widget.property.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
             const Divider(),
@@ -330,16 +427,31 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(context.translate('listing_type')),
-                Text(widget.isFeatured ? context.translate('featured_listing') : context.translate('standard_listing')),
+                Text(
+                  widget.isFeatured
+                      ? context.translate('featured_listing')
+                      : context.translate('standard_listing'),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(context.translate('total_amount'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                Text('${AppFormatters.formatCurrency(amount)} ${context.translate('egp')}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  context.translate('total_amount'),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${AppFormatters.formatCurrency(amount)} ${context.translate('egp')}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ],
@@ -391,7 +503,12 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   void _handlePayment(double amount) async {
     if (_receiptImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.translate('please_add_receipt') ?? 'Please attach payment proof image')),
+        SnackBar(
+          content: Text(
+            context.translate('please_add_receipt') ??
+                'Please attach payment proof image',
+          ),
+        ),
       );
       return;
     }
@@ -406,12 +523,20 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     });
 
     await ref.read(paymentProcessProvider.notifier).processPayment(formData);
-    
+
     final state = ref.read(paymentProcessProvider);
     if (state.hasError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${context.translate('payment_failed')}: ${state.error}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${context.translate('payment_failed')}: ${state.error}',
+          ),
+        ),
+      );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.translate('payment_submitted'))));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.translate('payment_submitted'))),
+      );
       Navigator.pop(context);
     }
   }

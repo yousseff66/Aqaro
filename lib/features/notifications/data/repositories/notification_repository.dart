@@ -4,7 +4,9 @@ import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/notifications/data/models/notification_model.dart';
 
-final notificationRepositoryProvider = Provider((ref) => NotificationRepository(ref.read(dioProvider)));
+final notificationRepositoryProvider = Provider(
+  (ref) => NotificationRepository(ref.read(dioProvider)),
+);
 
 class NotificationRepository {
   final Dio _dio;

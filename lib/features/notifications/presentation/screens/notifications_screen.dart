@@ -60,7 +60,8 @@ class NotificationsScreen extends ConsumerWidget {
       case 'PropertyPublished':
         return context.translate('notification_property_published_msg');
       case 'PropertyRejected':
-        return notif.message.isNotEmpty && notif.message != 'Your property has been rejected by the admin.'
+        return notif.message.isNotEmpty &&
+                notif.message != 'Your property has been rejected by the admin.'
             ? notif.message
             : context.translate('notification_property_rejected_msg');
       case 'PaymentApproved':
@@ -69,7 +70,8 @@ class NotificationsScreen extends ConsumerWidget {
             ? context.translate('notification_payment_approved')
             : context.translate('notification_payment_approved_new');
       case 'PaymentRejected':
-        return notif.message.isNotEmpty && notif.message != 'Your payment has been rejected.'
+        return notif.message.isNotEmpty &&
+                notif.message != 'Your payment has been rejected.'
             ? notif.message
             : context.translate('notification_payment_rejected');
       case 'PropertyExpiring':
@@ -97,9 +99,7 @@ class NotificationsScreen extends ConsumerWidget {
         ),
         body: const Padding(
           padding: EdgeInsets.all(24.0),
-          child: Center(
-            child: GuestPromptCard(),
-          ),
+          child: Center(child: GuestPromptCard()),
         ),
       );
     }
@@ -144,7 +144,11 @@ class NotificationsScreen extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.notifications_none, size: 80, color: Colors.grey),
+                          const Icon(
+                            Icons.notifications_none,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 16),
                           Text(context.translate('no_notifications')),
                         ],
@@ -168,34 +172,57 @@ class NotificationsScreen extends ConsumerWidget {
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
                   onDismissed: (_) {
-                    ref.read(notificationActionsProvider.notifier).deleteNotification(notif.id);
+                    ref
+                        .read(notificationActionsProvider.notifier)
+                        .deleteNotification(notif.id);
                   },
                   child: ListTile(
-                    tileColor: notif.isRead ? null : Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                    tileColor: notif.isRead
+                        ? null
+                        : Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.08),
                     leading: CircleAvatar(
-                      backgroundColor: _colorForType(context, notif.type).withOpacity(0.15),
-                      child: Icon(_iconForType(notif.type), color: _colorForType(context, notif.type)),
+                      backgroundColor: _colorForType(
+                        context,
+                        notif.type,
+                      ).withOpacity(0.15),
+                      child: Icon(
+                        _iconForType(notif.type),
+                        color: _colorForType(context, notif.type),
+                      ),
                     ),
                     title: Text(
                       _getTranslatedTitle(context, notif),
-                      style: TextStyle(fontWeight: notif.isRead ? FontWeight.normal : FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: notif.isRead
+                            ? FontWeight.normal
+                            : FontWeight.bold,
+                      ),
                     ),
                     subtitle: Text(_getTranslatedMessage(context, notif)),
                     trailing: notif.createdAt != null
                         ? Text(
-                      intl.DateFormat('dd/MM').format(notif.createdAt!),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    )
+                            intl.DateFormat('dd/MM').format(notif.createdAt!),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey,
+                            ),
+                          )
                         : null,
                     onTap: () {
                       if (!notif.isRead) {
-                        ref.read(notificationActionsProvider.notifier).markAsRead(notif.id);
+                        ref
+                            .read(notificationActionsProvider.notifier)
+                            .markAsRead(notif.id);
                       }
                       if (notif.propertyId != null) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => PropertyDetailScreen(propertyId: notif.propertyId!),
+                            builder: (_) => PropertyDetailScreen(
+                              propertyId: notif.propertyId!,
+                            ),
                           ),
                         );
                       }

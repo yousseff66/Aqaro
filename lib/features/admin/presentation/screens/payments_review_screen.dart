@@ -9,7 +9,8 @@ class PaymentsReviewScreen extends ConsumerStatefulWidget {
   const PaymentsReviewScreen({super.key});
 
   @override
-  ConsumerState<PaymentsReviewScreen> createState() => _PaymentsReviewScreenState();
+  ConsumerState<PaymentsReviewScreen> createState() =>
+      _PaymentsReviewScreenState();
 }
 
 class _PaymentsReviewScreenState extends ConsumerState<PaymentsReviewScreen> {
@@ -38,51 +39,62 @@ class _PaymentsReviewScreenState extends ConsumerState<PaymentsReviewScreen> {
         _buildFilterBar(),
         Expanded(
           child: RefreshIndicator(
-              onRefresh: () async => ref.invalidate(allPaymentsProvider),
-              child: paymentsAsync.when(
-                data: (payments) {
-                  final filteredPayments = _selectedStatus == 'All'
-                      ? payments
-                      : payments.where((p) => p.status == _selectedStatus).toList();
+            onRefresh: () async => ref.invalidate(allPaymentsProvider),
+            child: paymentsAsync.when(
+              data: (payments) {
+                final filteredPayments = _selectedStatus == 'All'
+                    ? payments
+                    : payments
+                          .where((p) => p.status == _selectedStatus)
+                          .toList();
 
-                  if (filteredPayments.isEmpty) {
-                    return ListView(
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                        Center(
-                          child: Column(
-                            children: [
-                              Icon(Icons.payments_outlined, size: 64, color: Colors.grey[400]),
-                              const SizedBox(height: 16),
-                              Text(
-                                _getNoPaymentsMessage(context),
-                                style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                if (filteredPayments.isEmpty) {
+                  return ListView(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.3,
+                      ),
+                      Center(
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.payments_outlined,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _getNoPaymentsMessage(context),
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 16,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    );
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: filteredPayments.length,
-                    itemBuilder: (context, index) {
-                      return _PaymentCard(
-                        payment: filteredPayments[index],
-                        isLoading: actionState.isLoading,
-                      );
-                    },
+                      ),
+                    ],
                   );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Error: $e')),
-              ),
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: filteredPayments.length,
+                  itemBuilder: (context, index) {
+                    return _PaymentCard(
+                      payment: filteredPayments[index],
+                      isLoading: actionState.isLoading,
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   Widget _buildFilterBar() {
@@ -116,11 +128,14 @@ class _PaymentsReviewScreenState extends ConsumerState<PaymentsReviewScreen> {
   String _getNoPaymentsMessage(BuildContext context) {
     switch (_selectedStatus) {
       case 'Pending':
-        return context.translate('no_pending_payments') ?? 'No pending payments';
+        return context.translate('no_pending_payments') ??
+            'No pending payments';
       case 'Approved':
-        return context.translate('no_approved_payments') ?? 'No approved payments';
+        return context.translate('no_approved_payments') ??
+            'No approved payments';
       case 'Rejected':
-        return context.translate('no_rejected_payments') ?? 'No rejected payments';
+        return context.translate('no_rejected_payments') ??
+            'No rejected payments';
       default:
         return context.translate('no_payments_yet');
     }
@@ -142,7 +157,10 @@ class _PaymentCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            title: Text(payment.user?.name ?? 'Unknown User', style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              payment.user?.name ?? 'Unknown User',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(payment.paymentMethod),
             trailing: _StatusBadge(status: payment.status),
           ),
@@ -155,22 +173,40 @@ class _PaymentCard extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(payment.property?.title ?? 'Unknown Property', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(
+                        payment.property?.title ?? 'Unknown Property',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         '${payment.amount} EGP',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (payment.isRenewal)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(color: Colors.amber[100], borderRadius: BorderRadius.circular(4)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber[100],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                     child: Text(
                       context.translate('renewal_payment') ?? 'Renewal',
-                      style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 12),
+                      style: const TextStyle(
+                        color: Colors.amber,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
               ],
@@ -181,7 +217,8 @@ class _PaymentCard extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: GestureDetector(
-                onTap: () => _showFullScreenImage(context, payment.receiptImage!),
+                onTap: () =>
+                    _showFullScreenImage(context, payment.receiptImage!),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
@@ -204,20 +241,36 @@ class _PaymentCard extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  payment.createdAt != null ? intl.DateFormat('MMM dd, yyyy HH:mm').format(payment.createdAt!) : '',
+                  payment.createdAt != null
+                      ? intl.DateFormat(
+                          'MMM dd, yyyy HH:mm',
+                        ).format(payment.createdAt!)
+                      : '',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
                 if (payment.status == 'Pending')
                   Row(
                     children: [
                       TextButton(
-                        onPressed: isLoading ? null : () => _showRejectDialog(context, ref, payment.id!),
-                        child: Text(context.translate('reject') ?? 'Reject', style: const TextStyle(color: Colors.red)),
+                        onPressed: isLoading
+                            ? null
+                            : () =>
+                                  _showRejectDialog(context, ref, payment.id!),
+                        child: Text(
+                          context.translate('reject') ?? 'Reject',
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton(
-                        onPressed: isLoading ? null : () => _showApproveDialog(context, ref, payment.id!),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                        onPressed: isLoading
+                            ? null
+                            : () =>
+                                  _showApproveDialog(context, ref, payment.id!),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
                         child: Text(context.translate('approve') ?? 'Approve'),
                       ),
                     ],
@@ -261,18 +314,34 @@ class _PaymentCard extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.translate('approve_payment') ?? 'Approve Payment'),
-        content: Text(context.translate('approve_payment_confirmation') ?? 'Are you sure you want to approve this payment?'),
+        content: Text(
+          context.translate('approve_payment_confirmation') ??
+              'Are you sure you want to approve this payment?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.translate('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.translate('cancel')),
+          ),
           TextButton(
             onPressed: () async {
               await ref.read(adminActionProvider.notifier).approvePayment(id);
               if (context.mounted) {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.translate('payment_approved') ?? 'Payment Approved')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      context.translate('payment_approved') ??
+                          'Payment Approved',
+                    ),
+                  ),
+                );
               }
             },
-            child: Text(context.translate('approve') ?? 'Approve', style: const TextStyle(color: Colors.green)),
+            child: Text(
+              context.translate('approve') ?? 'Approve',
+              style: const TextStyle(color: Colors.green),
+            ),
           ),
         ],
       ),
@@ -287,23 +356,46 @@ class _PaymentCard extends ConsumerWidget {
         title: Text(context.translate('reject_payment') ?? 'Reject Payment'),
         content: TextField(
           controller: controller,
-          textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-          decoration: InputDecoration(hintText: context.translate('rejection_reason_optional') ?? 'Rejection reason (optional)'),
+          textAlign: Directionality.of(context) == TextDirection.rtl
+              ? TextAlign.right
+              : TextAlign.left,
+          decoration: InputDecoration(
+            hintText:
+                context.translate('rejection_reason_optional') ??
+                'Rejection reason (optional)',
+          ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.translate('cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.translate('cancel')),
+          ),
           TextButton(
             onPressed: () async {
-              await ref.read(adminActionProvider.notifier).rejectPayment(
+              await ref
+                  .read(adminActionProvider.notifier)
+                  .rejectPayment(
                     id,
-                    reviewNote: controller.text.trim().isEmpty ? null : controller.text.trim(),
+                    reviewNote: controller.text.trim().isEmpty
+                        ? null
+                        : controller.text.trim(),
                   );
               if (context.mounted) {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.translate('payment_rejected') ?? 'Payment Rejected')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      context.translate('payment_rejected') ??
+                          'Payment Rejected',
+                    ),
+                  ),
+                );
               }
             },
-            child: Text(context.translate('reject') ?? 'Reject', style: const TextStyle(color: Colors.red)),
+            child: Text(
+              context.translate('reject') ?? 'Reject',
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -335,10 +427,18 @@ class _StatusBadge extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: color)),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color),
+      ),
       child: Text(
         context.translate(status.toLowerCase()) ?? status,
-        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

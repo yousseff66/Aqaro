@@ -43,7 +43,11 @@ class AdminStats {
     return AdminStats(
       totalUsers: users['total'] ?? 0,
       totalAdmins: users['admins'] ?? 0,
-      latestUsers: (users['latest'] as List?)?.map((e) => LatestUser.fromJson(e)).toList() ?? [],
+      latestUsers:
+          (users['latest'] as List?)
+              ?.map((e) => LatestUser.fromJson(e))
+              .toList() ??
+          [],
       totalProperties: properties['total'] ?? 0,
       pendingProperties: properties['pending'] ?? 0,
       publishedProperties: properties['published'] ?? 0,
@@ -56,7 +60,11 @@ class AdminStats {
       pendingPayments: payments['pending'] ?? 0,
       totalRevenue: (payments['totalRevenue'] as num?)?.toDouble() ?? 0.0,
       activeReports: json['activeReports'] ?? 0,
-      topCities: (json['topCities'] as List?)?.map((e) => CityStat.fromJson(e)).toList() ?? [],
+      topCities:
+          (json['topCities'] as List?)
+              ?.map((e) => CityStat.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }
@@ -67,14 +75,21 @@ class LatestUser {
   final String email;
   final DateTime? createdAt;
 
-  LatestUser({required this.id, required this.name, required this.email, this.createdAt});
+  LatestUser({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.createdAt,
+  });
 
   factory LatestUser.fromJson(Map<String, dynamic> json) {
     return LatestUser(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
     );
   }
 }

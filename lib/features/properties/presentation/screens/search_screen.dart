@@ -35,18 +35,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void _triggerSearch() {
     if (!mounted) return;
     setState(() => _hasSearched = true);
-    ref.read(searchResultsProvider.notifier).fetchProperties(
-      search: _searchController.text.isNotEmpty ? _searchController.text : null,
-      city: null,
-      governorate: null,
-      minPrice: _minPrice,
-      maxPrice: _maxPrice,
-      bedrooms: _bedrooms,
-      propertyType: _propertyType,
-      listingPurpose: _listingPurpose,
-      sort: _sort,
-      refresh: true,
-    );
+    ref
+        .read(searchResultsProvider.notifier)
+        .fetchProperties(
+          search: _searchController.text.isNotEmpty
+              ? _searchController.text
+              : null,
+          city: null,
+          governorate: null,
+          minPrice: _minPrice,
+          maxPrice: _maxPrice,
+          bedrooms: _bedrooms,
+          propertyType: _propertyType,
+          listingPurpose: _listingPurpose,
+          sort: _sort,
+          refresh: true,
+        );
   }
 
   @override
@@ -97,13 +101,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: VerticalDivider(
-                  color: Colors.grey[300],
-                  width: 1,
-                ),
+                child: VerticalDivider(color: Colors.grey[300], width: 1),
               ),
               IconButton(
-                icon: const Icon(Icons.tune, color: AppColors.carbon900, size: 20),
+                icon: const Icon(
+                  Icons.tune,
+                  color: AppColors.carbon900,
+                  size: 20,
+                ),
                 onPressed: () => _showFilterSheet(context),
               ),
               const SizedBox(width: 4),
@@ -119,10 +124,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[400]),
+                  Icon(
+                    Icons.search_off_outlined,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
                   const SizedBox(height: 16),
                   Text(
-                    context.translate('no_results_found') ?? 'No properties found matching your criteria',
+                    context.translate('no_results_found') ??
+                        'No properties found matching your criteria',
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                 ],
@@ -138,7 +148,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PropertyDetailScreen(propertyId: property.id!),
+                    builder: (context) =>
+                        PropertyDetailScreen(propertyId: property.id!),
                   ),
                 ),
               );
@@ -174,47 +185,96 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 children: [
                   Text(
                     context.translate('filters'),
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: _propertyType,
                     hint: Text(context.translate('property_type')),
-                    items: ['Apartment', 'Villa', 'Studio', 'Office'].map((e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(context.translate('type_${e.toLowerCase()}') ?? e),
-                    )).toList(),
+                    items: ['Apartment', 'Villa', 'Studio', 'Office']
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              context.translate('type_${e.toLowerCase()}') ?? e,
+                            ),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (v) => setModalState(() => _propertyType = v),
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String?>(
                     value: _listingPurpose,
-                    decoration: InputDecoration(labelText: context.translate('listing_purpose')),
+                    decoration: InputDecoration(
+                      labelText: context.translate('listing_purpose'),
+                    ),
                     items: [
-                      DropdownMenuItem(value: null, child: Text(context.translate('any') ?? 'Any')),
-                      DropdownMenuItem(value: 'Sale', child: Text(context.translate('sale'))),
-                      DropdownMenuItem(value: 'Rent', child: Text(context.translate('rent'))),
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(context.translate('any') ?? 'Any'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Sale',
+                        child: Text(context.translate('sale')),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Rent',
+                        child: Text(context.translate('rent')),
+                      ),
                     ],
                     onChanged: (v) => setModalState(() => _listingPurpose = v),
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<int?>(
                     value: _bedrooms,
-                    decoration: InputDecoration(labelText: context.translate('bedrooms')),
+                    decoration: InputDecoration(
+                      labelText: context.translate('bedrooms'),
+                    ),
                     items: [
-                      DropdownMenuItem(value: null, child: Text(context.translate('any') ?? 'Any')),
-                      ...List.generate(10, (i) => i + 1).map((e) => DropdownMenuItem(value: e, child: Text(e.toString()))),
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(context.translate('any') ?? 'Any'),
+                      ),
+                      ...List.generate(10, (i) => i + 1).map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.toString()),
+                        ),
+                      ),
                     ],
                     onChanged: (v) => setModalState(() => _bedrooms = v),
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String?>(
                     value: _sort,
-                    decoration: InputDecoration(labelText: context.translate('sort_by') ?? 'Sort By'),
+                    decoration: InputDecoration(
+                      labelText: context.translate('sort_by') ?? 'Sort By',
+                    ),
                     items: [
-                      DropdownMenuItem(value: null, child: Text(context.translate('sort_latest') ?? 'Latest')),
-                      DropdownMenuItem(value: 'priceAsc', child: Text(context.translate('sort_price_asc') ?? 'Price: Low to High')),
-                      DropdownMenuItem(value: 'priceDesc', child: Text(context.translate('sort_price_desc') ?? 'Price: High to Low')),
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(
+                          context.translate('sort_latest') ?? 'Latest',
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'priceAsc',
+                        child: Text(
+                          context.translate('sort_price_asc') ??
+                              'Price: Low to High',
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'priceDesc',
+                        child: Text(
+                          context.translate('sort_price_desc') ??
+                              'Price: High to Low',
+                        ),
+                      ),
                     ],
                     onChanged: (v) => setModalState(() => _sort = v),
                   ),
@@ -224,7 +284,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       Expanded(
                         child: TextFormField(
                           initialValue: _minPrice?.toString(),
-                          decoration: InputDecoration(labelText: context.translate('min_price')),
+                          decoration: InputDecoration(
+                            labelText: context.translate('min_price'),
+                          ),
                           keyboardType: TextInputType.number,
                           onChanged: (v) => _minPrice = double.tryParse(v),
                         ),
@@ -233,7 +295,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       Expanded(
                         child: TextFormField(
                           initialValue: _maxPrice?.toString(),
-                          decoration: InputDecoration(labelText: context.translate('max_price')),
+                          decoration: InputDecoration(
+                            labelText: context.translate('max_price'),
+                          ),
                           keyboardType: TextInputType.number,
                           onChanged: (v) => _maxPrice = double.tryParse(v),
                         ),

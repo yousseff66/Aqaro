@@ -14,23 +14,22 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      ref.read(authProvider.notifier).login(
-            _emailController.text.trim(),
-            _passwordController.text,
-          );
+      ref
+          .read(authProvider.notifier)
+          .login(_phoneController.text.trim(), _passwordController.text);
     }
   }
 
@@ -38,7 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (previous, next) {
       final wasAuthenticated = previous?.isAuthenticated ?? false;
-      
+
       // If user just authenticated or just skipped login, pop if possible
       if ((next.isAuthenticated && !wasAuthenticated) || next.isGuest) {
         if (Navigator.of(context).canPop()) {
@@ -62,7 +61,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary, // تغيير للون الداكن
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary, // تغيير للون الداكن
                     ),
                   ),
                 ),
@@ -77,7 +78,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary, // تغيير للون الداكن
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary, // تغيير للون الداكن
                     ),
                   ),
                 ),
@@ -103,22 +106,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Text(
                   context.translate('login'),
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
-                  controller: _emailController,
+                  controller: _phoneController,
                   decoration: InputDecoration(
-                    labelText: context.translate('email'),
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    labelText: context.translate('phone_number'),
+                    prefixIcon: const Icon(Icons.phone_outlined),
                     border: const OutlineInputBorder(),
+                    helperText: context.translate('phone_helper'),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                  validator: (value) =>
-                      (value == null || !value.contains('@')) ? context.translate('enter_valid_email') : null,
+                  keyboardType: TextInputType.phone,
+                  textAlign: Directionality.of(context) == TextDirection.rtl
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return context.translate('required') ?? 'Required';
+                    }
+                    if (!RegExp(r'^01[0125][0-9]{8}$').hasMatch(value)) {
+                      return context.translate('invalid_egyptian_phone') ??
+                          'رقم غير صحيح، مثال: 01012345678';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -128,14 +142,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   obscureText: _obscurePassword,
-                  textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-                  validator: (value) =>
-                      (value == null || value.length < 8) ? context.translate('password_min_length') : null,
+                  textAlign: Directionality.of(context) == TextDirection.rtl
+                      ? TextAlign.right
+                      : TextAlign.left,
+                  validator: (value) => (value == null || value.length < 8)
+                      ? context.translate('password_min_length')
+                      : null,
                 ),
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
@@ -143,11 +165,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const ForgotPasswordScreen(),
+                        ),
                       );
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.secondary, // استخدام الكربوني بدل الليموني
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondary, // استخدام الكربوني بدل الليموني
                     ),
                     child: Text(
                       context.translate('forgot_password'),
@@ -171,7 +197,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
                         )
                       : Text(context.translate('login_button')),
                 ),
@@ -179,7 +208,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 OutlinedButton(
                   onPressed: () => ref.read(authProvider.notifier).skipLogin(),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Theme.of(context).colorScheme.secondary), // حدود كربونية واضحة
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ), // حدود كربونية واضحة
                     foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Text(

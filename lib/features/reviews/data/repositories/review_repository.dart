@@ -49,9 +49,7 @@ class ReviewRepository {
     required int rating,
     String? comment,
   }) async {
-    final Map<String, dynamic> data = {
-      'rating': rating,
-    };
+    final Map<String, dynamic> data = {'rating': rating};
     if (comment != null) {
       data['comment'] = comment;
     }

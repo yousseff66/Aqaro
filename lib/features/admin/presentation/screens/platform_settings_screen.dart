@@ -4,7 +4,9 @@ import 'package:sakan_app/core/localization/app_localizations.dart';
 import 'package:sakan_app/features/admin/data/models/settings_model.dart';
 import 'package:sakan_app/features/admin/data/repositories/settings_repository.dart';
 
-final settingsFutureProvider = FutureProvider.autoDispose<PlatformSettings>((ref) async {
+final settingsFutureProvider = FutureProvider.autoDispose<PlatformSettings>((
+  ref,
+) async {
   return ref.read(settingsRepositoryProvider).getSettings();
 });
 
@@ -12,10 +14,12 @@ class PlatformSettingsScreen extends ConsumerStatefulWidget {
   const PlatformSettingsScreen({super.key});
 
   @override
-  ConsumerState<PlatformSettingsScreen> createState() => _PlatformSettingsScreenState();
+  ConsumerState<PlatformSettingsScreen> createState() =>
+      _PlatformSettingsScreenState();
 }
 
-class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen> {
+class _PlatformSettingsScreenState
+    extends ConsumerState<PlatformSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -88,7 +92,8 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
   void _initFields(PlatformSettings settings) {
     _normalPriceController.text = settings.normalListingPrice.toString();
     _featuredPriceWeekController.text = settings.featuredPriceWeek.toString();
-    _featuredPriceTwoWeeksController.text = settings.featuredPriceTwoWeeks.toString();
+    _featuredPriceTwoWeeksController.text = settings.featuredPriceTwoWeeks
+        .toString();
     _featuredPriceMonthController.text = settings.featuredPriceMonth.toString();
     _durationController.text = settings.listingDurationDays.toString();
     _supportPhoneController.text = settings.supportPhone;
@@ -119,7 +124,9 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
       final data = {
         'normalListingPrice': double.parse(_normalPriceController.text),
         'featuredPriceWeek': double.parse(_featuredPriceWeekController.text),
-        'featuredPriceTwoWeeks': double.parse(_featuredPriceTwoWeeksController.text),
+        'featuredPriceTwoWeeks': double.parse(
+          _featuredPriceTwoWeeksController.text,
+        ),
         'featuredPriceMonth': double.parse(_featuredPriceMonthController.text),
         'listingDurationDays': int.parse(_durationController.text),
         'supportPhone': _supportPhoneController.text,
@@ -149,14 +156,19 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.translate('settings_updated') ?? 'Settings updated successfully')),
+          SnackBar(
+            content: Text(
+              context.translate('settings_updated') ??
+                  'Settings updated successfully',
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -169,166 +181,193 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
 
     return settingsAsync.when(
       data: (settings) {
-          if (_normalPriceController.text.isEmpty && !_isLoading) {
-            _initFields(settings);
-          }
+        if (_normalPriceController.text.isEmpty && !_isLoading) {
+          _initFields(settings);
+        }
 
-          return Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildSectionTitle(context.translate('pricing') ?? 'Pricing'),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _normalPriceController,
-                  label: context.translate('normal_listing_price') ?? 'Normal Listing Price (EGP)',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _featuredPriceWeekController,
-                  label: '${context.translate('featured_listing_price')} (${context.translate('duration_week')})',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _featuredPriceTwoWeeksController,
-                  label: '${context.translate('featured_listing_price')} (${context.translate('duration_two_weeks')})',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _featuredPriceMonthController,
-                  label: '${context.translate('featured_listing_price')} (${context.translate('duration_month')})',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 24),
-                _buildSectionTitle(context.translate('listing_policy') ?? 'Listing Policy'),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _durationController,
-                  label: context.translate('listing_duration_days') ?? 'Duration (Days)',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _maxImagesController,
-                  label: context.translate('max_images') ?? 'Max Images Per Property',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 24),
-                _buildSectionTitle(context.translate('support_info') ?? 'Support Info'),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _supportPhoneController,
-                  label: context.translate('support_phone') ?? 'Support Phone',
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _supportEmailController,
-                  label: context.translate('support_email') ?? 'Support Email',
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 24),
-                _buildSectionTitle(context.translate('payment_methods') ?? 'Payment Methods'),
-                const SizedBox(height: 16),
-                
-                // InstaPay Card
-                _buildPaymentMethodCard(
-                  title: context.translate('instapay') ?? 'InstaPay',
-                  enabled: _instaPayEnabled,
-                  onChanged: (v) => setState(() => _instaPayEnabled = v),
-                  children: [
-                    _buildTextField(
-                      controller: _instaPayNameController,
-                      label: context.translate('account_name') ?? 'Account Name',
-                    ),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _instaPayNumberController,
-                      label: context.translate('instapay_number') ?? 'InstaPay Number/Handle',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+        return Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _buildSectionTitle(context.translate('pricing') ?? 'Pricing'),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _normalPriceController,
+                label:
+                    context.translate('normal_listing_price') ??
+                    'Normal Listing Price (EGP)',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _featuredPriceWeekController,
+                label:
+                    '${context.translate('featured_listing_price')} (${context.translate('duration_week')})',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _featuredPriceTwoWeeksController,
+                label:
+                    '${context.translate('featured_listing_price')} (${context.translate('duration_two_weeks')})',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _featuredPriceMonthController,
+                label:
+                    '${context.translate('featured_listing_price')} (${context.translate('duration_month')})',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 24),
+              _buildSectionTitle(
+                context.translate('listing_policy') ?? 'Listing Policy',
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _durationController,
+                label:
+                    context.translate('listing_duration_days') ??
+                    'Duration (Days)',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _maxImagesController,
+                label:
+                    context.translate('max_images') ??
+                    'Max Images Per Property',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 24),
+              _buildSectionTitle(
+                context.translate('support_info') ?? 'Support Info',
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _supportPhoneController,
+                label: context.translate('support_phone') ?? 'Support Phone',
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _supportEmailController,
+                label: context.translate('support_email') ?? 'Support Email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 24),
+              _buildSectionTitle(
+                context.translate('payment_methods') ?? 'Payment Methods',
+              ),
+              const SizedBox(height: 16),
 
-                // Vodafone Cash Card
-                _buildPaymentMethodCard(
-                  title: context.translate('vodafone_cash') ?? 'Vodafone Cash',
-                  enabled: _vodafoneEnabled,
-                  onChanged: (v) => setState(() => _vodafoneEnabled = v),
-                  children: [
-                    _buildTextField(
-                      controller: _vodafoneNumberController,
-                      label: context.translate('vodafone_number') ?? 'Vodafone Number',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Visa Card
-                _buildPaymentMethodCard(
-                  title: context.translate('visa') ?? 'Visa / Bank Transfer',
-                  enabled: _visaEnabled,
-                  onChanged: (v) => setState(() => _visaEnabled = v),
-                  children: [
-                    _buildTextField(
-                      controller: _visaHolderController,
-                      label: context.translate('account_holder') ?? 'Account Holder',
-                    ),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _visaBankController,
-                      label: context.translate('bank_name') ?? 'Bank Name',
-                    ),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _visaCardNumberController,
-                      label: context.translate('card_number') ?? 'Card/Account Number',
-                    ),
-                  ],
-                ),
-
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _saveSettings,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              // InstaPay Card
+              _buildPaymentMethodCard(
+                title: context.translate('instapay') ?? 'InstaPay',
+                enabled: _instaPayEnabled,
+                onChanged: (v) => setState(() => _instaPayEnabled = v),
+                children: [
+                  _buildTextField(
+                    controller: _instaPayNameController,
+                    label: context.translate('account_name') ?? 'Account Name',
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : Text(
-                          context.translate('save') ?? 'Save Settings',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary, 
-                            fontSize: 16, 
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  const SizedBox(height: 8),
+                  _buildTextField(
+                    controller: _instaPayNumberController,
+                    label:
+                        context.translate('instapay_number') ??
+                        'InstaPay Number/Handle',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Vodafone Cash Card
+              _buildPaymentMethodCard(
+                title: context.translate('vodafone_cash') ?? 'Vodafone Cash',
+                enabled: _vodafoneEnabled,
+                onChanged: (v) => setState(() => _vodafoneEnabled = v),
+                children: [
+                  _buildTextField(
+                    controller: _vodafoneNumberController,
+                    label:
+                        context.translate('vodafone_number') ??
+                        'Vodafone Number',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Visa Card
+              _buildPaymentMethodCard(
+                title: context.translate('visa') ?? 'Visa / Bank Transfer',
+                enabled: _visaEnabled,
+                onChanged: (v) => setState(() => _visaEnabled = v),
+                children: [
+                  _buildTextField(
+                    controller: _visaHolderController,
+                    label:
+                        context.translate('account_holder') ?? 'Account Holder',
+                  ),
+                  const SizedBox(height: 8),
+                  _buildTextField(
+                    controller: _visaBankController,
+                    label: context.translate('bank_name') ?? 'Bank Name',
+                  ),
+                  const SizedBox(height: 8),
+                  _buildTextField(
+                    controller: _visaCardNumberController,
+                    label:
+                        context.translate('card_number') ??
+                        'Card/Account Number',
+                  ),
+                ],
+              ),
+
+              ElevatedButton(
+                onPressed: _isLoading ? null : _saveSettings,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
-                const SizedBox(height: 40),
-              ],
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-      );
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        context.translate('save') ?? 'Save Settings',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text('Error: $e')),
+    );
   }
 
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 18, 
-        fontWeight: FontWeight.bold, 
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
         color: Theme.of(context).colorScheme.primary,
       ),
     );
@@ -344,7 +383,10 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
       ),
       keyboardType: keyboardType,
       validator: (v) {
@@ -375,7 +417,10 @@ class _PlatformSettingsScreenState extends ConsumerState<PlatformSettingsScreen>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 Switch(
                   value: enabled,

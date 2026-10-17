@@ -56,7 +56,10 @@ class PropertyCard extends ConsumerWidget {
                     top: 12,
                     start: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.gold,
                         borderRadius: BorderRadius.circular(4),
@@ -71,7 +74,11 @@ class PropertyCard extends ConsumerWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.stars, color: AppColors.onGold, size: 14),
+                          const Icon(
+                            Icons.stars,
+                            color: AppColors.onGold,
+                            size: 14,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             context.translate('featured').toUpperCase(),
@@ -89,14 +96,23 @@ class PropertyCard extends ConsumerWidget {
                   top: 12,
                   end: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.carbon900.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      context.translate(property.listingPurpose.toLowerCase()).toUpperCase(),
-                      style: const TextStyle(color: AppColors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      context
+                          .translate(property.listingPurpose.toLowerCase())
+                          .toUpperCase(),
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -104,14 +120,20 @@ class PropertyCard extends ConsumerWidget {
                   bottom: 12,
                   start: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.carbon900.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       '${AppFormatters.formatCurrency(property.price)} ${context.translate('egp')}',
-                      style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -123,7 +145,11 @@ class PropertyCard extends ConsumerWidget {
                       color: AppColors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
-                        BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
                       ],
                     ),
                     child: IconButton(
@@ -141,7 +167,9 @@ class PropertyCard extends ConsumerWidget {
                           return;
                         }
                         if (property.id != null) {
-                          ref.read(favoriteToggleProvider.notifier).toggle(property.id!, isFavorite);
+                          ref
+                              .read(favoriteToggleProvider.notifier)
+                              .toggle(property.id!, isFavorite);
                         }
                       },
                     ),
@@ -153,23 +181,34 @@ class PropertyCard extends ConsumerWidget {
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // يخلي العمود ياخد أقل مساحة ممكنة
+                mainAxisSize:
+                    MainAxisSize.min, // يخلي العمود ياخد أقل مساحة ممكنة
                 children: [
                   Text(
                     property.title,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // صغرنا الخط سنة
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ), // صغرنا الخط سنة
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2), // قللنا المسافة
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 12, color: AppColors.muted),
+                      const Icon(
+                        Icons.location_on,
+                        size: 12,
+                        color: AppColors.muted,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           '${property.city}, ${property.governorate}',
-                          style: const TextStyle(color: AppColors.muted, fontSize: 11),
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 11,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -180,20 +219,48 @@ class PropertyCard extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(child: _buildAttribute(context, Icons.king_bed_outlined, '${property.bedrooms}')),
-                      Expanded(child: _buildAttribute(context, Icons.bathtub_outlined, '${property.bathrooms}')),
-                      Expanded(child: _buildAttribute(context, Icons.square_foot_outlined, '${AppFormatters.formatNumber(property.area)}')),
+                      Expanded(
+                        child: _buildAttribute(
+                          context,
+                          Icons.king_bed_outlined,
+                          '${property.bedrooms}',
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildAttribute(
+                          context,
+                          Icons.bathtub_outlined,
+                          '${property.bathrooms}',
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildAttribute(
+                          context,
+                          Icons.square_foot_outlined,
+                          '${AppFormatters.formatNumber(property.area)}',
+                        ),
+                      ),
                     ],
                   ),
                   if (property.publishedAt != null) ...[
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_outlined, size: 12, color: AppColors.muted),
+                        const Icon(
+                          Icons.calendar_today_outlined,
+                          size: 12,
+                          color: AppColors.muted,
+                        ),
                         const SizedBox(width: 4),
                         Text(
-                          DateFormat('dd/MM/yyyy', 'en_US').format(property.publishedAt!),
-                          style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                          DateFormat(
+                            'dd/MM/yyyy',
+                            'en_US',
+                          ).format(property.publishedAt!),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.muted,
+                          ),
                         ),
                       ],
                     ),

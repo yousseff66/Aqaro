@@ -31,18 +31,20 @@ class ModeToggleAppBar extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: true,
       // العنوان في المنتصف وبخط عريض وشكله بريميوم
-      title: titleWidget ?? Text(
-        title!,
-        style: const TextStyle(
-          fontWeight: FontWeight.w900, 
-          letterSpacing: -0.8,
-          fontSize: 20,
-        ),
-      ),
+      title:
+          titleWidget ??
+          Text(
+            title!,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              letterSpacing: -0.8,
+              fontSize: 20,
+            ),
+          ),
       // الجرس بقا على اليمين (في الـ leading بتاع الـ RTL)
-      leadingWidth: 70, 
-      leading: actions != null && actions!.isNotEmpty 
-          ? Center(child: actions!.first) 
+      leadingWidth: 70,
+      leading: actions != null && actions!.isNotEmpty
+          ? Center(child: actions!.first)
           : null,
       actions: [
         // زرار المود بقا "رقيق" وصغير وشكله شيك على الشمال
@@ -57,13 +59,16 @@ class ModeToggleAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     AuthGuardDialog.show(context);
                     return;
                   }
-                  ref.read(appModeProvider.notifier).state =
-                      isHosting ? AppMode.renting : AppMode.hosting;
+                  ref.read(appModeProvider.notifier).state = isHosting
+                      ? AppMode.renting
+                      : AppMode.hosting;
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: AppColors.carbon900.withAlpha(30),
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -79,9 +84,9 @@ class ModeToggleAppBar extends ConsumerWidget implements PreferredSizeWidget {
                           ? context.translate('switch_to_renting')
                           : context.translate('switch_to_hosting'),
                       style: const TextStyle(
-                        color: AppColors.carbon900, 
+                        color: AppColors.carbon900,
                         fontSize: 9, // أصغر خط ممكن وواضح
-                        fontWeight: FontWeight.w900
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                   ],

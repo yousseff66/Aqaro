@@ -9,6 +9,7 @@ import 'package:sakan_app/shared/widgets/mode_toggle_appbar.dart';
 
 import 'package:sakan_app/features/auth/presentation/screens/about_screen.dart';
 import 'package:sakan_app/features/auth/presentation/screens/login_screen.dart';
+import 'package:sakan_app/features/auth/presentation/screens/otp_verification_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -21,17 +22,12 @@ class ProfileScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return Scaffold(
-      appBar: ModeToggleAppBar(
-        title: context.translate('profile'),
-      ),
+      appBar: ModeToggleAppBar(title: context.translate('profile')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CircleAvatar(
-              radius: 50,
-              child: Icon(Icons.person, size: 50),
-            ),
+            const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
             const SizedBox(height: 16),
             Text(
               user?.name ?? context.translate('guest_user'),
@@ -39,14 +35,16 @@ class ProfileScreen extends ConsumerWidget {
             ),
             Text(user?.email ?? ''),
             const SizedBox(height: 32),
-            
+
             Card(
               child: Column(
                 children: [
                   ListTile(
                     leading: const Icon(Icons.language),
                     title: Text(context.translate('language')),
-                    trailing: Text(locale.languageCode == 'ar' ? 'العربية' : 'English'),
+                    trailing: Text(
+                      locale.languageCode == 'ar' ? 'العربية' : 'English',
+                    ),
                     onTap: () {
                       final newLang = locale.languageCode == 'ar' ? 'en' : 'ar';
                       ref.read(localeProvider.notifier).setLocale(newLang);
@@ -74,7 +72,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             Card(
               child: Column(
                 children: [
@@ -92,14 +90,19 @@ class ProfileScreen extends ConsumerWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AboutScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const AboutScreen(),
+                        ),
                       );
                     },
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.support_agent),
-                    title: Text(context.translate('contact_support') ?? 'تواصل مع الدعم الفني'),
+                    title: Text(
+                      context.translate('contact_support') ??
+                          'تواصل مع الدعم الفني',
+                    ),
                     onTap: () => _showContactSupportDialog(context, ref),
                   ),
                 ],
@@ -132,9 +135,9 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => LoginScreen()),
-                    );
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => LoginScreen()));
                   },
                 ),
               ),
@@ -145,9 +148,7 @@ class ProfileScreen extends ConsumerWidget {
                   leading: const Icon(Icons.delete_forever, color: Colors.grey),
                   title: Text(
                     context.translate('delete_account'),
-                    style: const TextStyle(
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   onTap: () => _showDeleteAccountDialog(context, ref),
                 ),
@@ -163,8 +164,13 @@ class ProfileScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(context.translate('delete_account_title') ?? 'Delete Account'),
-        content: Text(context.translate('delete_account_confirmation') ?? 'Are you sure you want to delete your account?'),
+        title: Text(
+          context.translate('delete_account_title') ?? 'Delete Account',
+        ),
+        content: Text(
+          context.translate('delete_account_confirmation') ??
+              'Are you sure you want to delete your account?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -176,18 +182,26 @@ class ProfileScreen extends ConsumerWidget {
               showDialog(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) => const Center(child: CircularProgressIndicator()),
+                builder: (context) =>
+                    const Center(child: CircularProgressIndicator()),
               );
 
-              final result = await ref.read(authProvider.notifier).deleteAccount();
-              
+              final result = await ref
+                  .read(authProvider.notifier)
+                  .deleteAccount();
+
               if (context.mounted) {
                 Navigator.pop(context); // إغلاق الـ Loading
                 Navigator.pop(context); // إغلاق ديالوج التأكيد
-                
+
                 if (result['success'] == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.translate('account_deleted') ?? 'Account deleted')),
+                    SnackBar(
+                      content: Text(
+                        context.translate('account_deleted') ??
+                            'Account deleted',
+                      ),
+                    ),
                   );
                   // التوجيه لشاشة تسجيل الدخول بعد المسح
                   Navigator.of(context).pushAndRemoveUntil(
@@ -222,9 +236,12 @@ class ProfileScreen extends ConsumerWidget {
             controller: controller,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(hintText: '01xxxxxxxxx'),
-            textAlign: Directionality.of(context) == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+            textAlign: Directionality.of(context) == TextDirection.rtl
+                ? TextAlign.right
+                : TextAlign.left,
             validator: (value) {
-              if (value == null || !RegExp(r'^01[0125][0-9]{8}$').hasMatch(value)) {
+              if (value == null ||
+                  !RegExp(r'^01[0125][0-9]{8}$').hasMatch(value)) {
                 return context.translate('invalid_egyptian_phone');
               }
               return null;
@@ -232,20 +249,23 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.translate('cancel'))),
           TextButton(
-            onPressed: () async {
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.translate('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
               if (formKey.currentState!.validate()) {
-                final result = await ref.read(authProvider.notifier).changePhone(controller.text.trim());
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(result['success'] == true
-                            ? context.translate('phone_updated')
-                            : result['message'])),
-                  );
-                }
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OtpVerificationScreen(
+                      phone: controller.text.trim(),
+                      mode: OtpMode.changePhone,
+                    ),
+                  ),
+                );
               }
             },
             child: Text(context.translate('save')),
@@ -254,6 +274,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+
   void _showContactSupportDialog(BuildContext context, WidgetRef ref) {
     final subjectController = TextEditingController();
     final messageController = TextEditingController();
@@ -265,7 +286,9 @@ class ProfileScreen extends ConsumerWidget {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text(context.translate('contact_support') ?? 'تواصل مع الدعم الفني'),
+            title: Text(
+              context.translate('contact_support') ?? 'تواصل مع الدعم الفني',
+            ),
             content: Form(
               key: formKey,
               child: SingleChildScrollView(
@@ -278,7 +301,9 @@ class ProfileScreen extends ConsumerWidget {
                         labelText: context.translate('subject') ?? 'الموضوع',
                         border: const OutlineInputBorder(),
                       ),
-                      validator: (v) => v!.isEmpty ? context.translate('required') ?? 'مطلوب' : null,
+                      validator: (v) => v!.isEmpty
+                          ? context.translate('required') ?? 'مطلوب'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -288,7 +313,9 @@ class ProfileScreen extends ConsumerWidget {
                         border: const OutlineInputBorder(),
                       ),
                       maxLines: 4,
-                      validator: (v) => v!.isEmpty ? context.translate('required') ?? 'مطلوب' : null,
+                      validator: (v) => v!.isEmpty
+                          ? context.translate('required') ?? 'مطلوب'
+                          : null,
                     ),
                   ],
                 ),
@@ -309,31 +336,46 @@ class ProfileScreen extends ConsumerWidget {
                             final dio = ref.read(dioProvider);
                             // Send request directly to API
                             await dio.post(
-                                  '/support',
-                                  data: {
-                                    'subject': subjectController.text.trim(),
-                                    'message': messageController.text.trim(),
-                                  },
-                                );
+                              '/support',
+                              data: {
+                                'subject': subjectController.text.trim(),
+                                'message': messageController.text.trim(),
+                              },
+                            );
                             if (context.mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(context.translate('support_sent_success') ?? 'تم إرسال رسالتك بنجاح!')),
+                                SnackBar(
+                                  content: Text(
+                                    context.translate('support_sent_success') ??
+                                        'تم إرسال رسالتك بنجاح!',
+                                  ),
+                                ),
                               );
                             }
                           } catch (e) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(context.translate('error') ?? 'حدث خطأ، يرجى المحاولة لاحقاً')),
+                                SnackBar(
+                                  content: Text(
+                                    context.translate('error') ??
+                                        'حدث خطأ، يرجى المحاولة لاحقاً',
+                                  ),
+                                ),
                               );
                             }
                           } finally {
-                            if (context.mounted) setState(() => isLoading = false);
+                            if (context.mounted)
+                              setState(() => isLoading = false);
                           }
                         }
                       },
                 child: isLoading
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : Text(context.translate('send') ?? 'إرسال'),
               ),
             ],

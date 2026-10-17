@@ -8,14 +8,19 @@ import 'package:sakan_app/features/properties/data/models/property_model.dart';
 import 'package:sakan_app/features/payment/data/models/payment_model.dart';
 import 'package:sakan_app/shared/models/user_model.dart';
 
-final adminRepositoryProvider = Provider((ref) => AdminRepository(ref.read(dioProvider)));
+final adminRepositoryProvider = Provider(
+  (ref) => AdminRepository(ref.read(dioProvider)),
+);
 
 class AdminRepository {
   final Dio _dio;
 
   AdminRepository(this._dio);
 
-  Future<AdminStats> getDashboardStats({DateTime? startDate, DateTime? endDate}) async {
+  Future<AdminStats> getDashboardStats({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
     final response = await _dio.get(
       ApiConstants.adminDashboard,
       queryParameters: {
@@ -30,7 +35,9 @@ class AdminRepository {
     final response = await _dio.get(ApiConstants.adminUsers);
     final data = response.data;
     if (data is Map && data.containsKey('results')) {
-      return (data['results'] as List).map((json) => User.fromJson(json)).toList();
+      return (data['results'] as List)
+          .map((json) => User.fromJson(json))
+          .toList();
     }
     if (data is List) {
       return data.map((json) => User.fromJson(json)).toList();
@@ -42,7 +49,9 @@ class AdminRepository {
     final response = await _dio.get(ApiConstants.adminPendingProperties);
     final data = response.data;
     if (data is Map && data.containsKey('results')) {
-      return (data['results'] as List).map((json) => Property.fromJson(json)).toList();
+      return (data['results'] as List)
+          .map((json) => Property.fromJson(json))
+          .toList();
     }
     if (data is List) {
       return data.map((json) => Property.fromJson(json)).toList();
@@ -50,12 +59,19 @@ class AdminRepository {
     return [];
   }
 
-  Future<void> updatePropertyStatus(String id, String status, {String? reviewNote}) async {
+  Future<void> updatePropertyStatus(
+    String id,
+    String status, {
+    String? reviewNote,
+  }) async {
     // بناء المسار /admin/properties/$id/status
-    await _dio.patch('/admin/properties/$id/status', data: {
-      'status': status,
-      if (reviewNote != null) 'reviewNote': reviewNote,
-    });
+    await _dio.patch(
+      '/admin/properties/$id/status',
+      data: {
+        'status': status,
+        if (reviewNote != null) 'reviewNote': reviewNote,
+      },
+    );
   }
 
   Future<List<Payment>> getAllPayments({String? status}) async {
@@ -65,7 +81,9 @@ class AdminRepository {
     );
     final data = response.data;
     if (data is Map && data.containsKey('results')) {
-      return (data['results'] as List).map((json) => Payment.fromJson(json)).toList();
+      return (data['results'] as List)
+          .map((json) => Payment.fromJson(json))
+          .toList();
     }
     if (data is List) {
       return data.map((json) => Payment.fromJson(json)).toList();
@@ -75,9 +93,10 @@ class AdminRepository {
 
   Future<void> approvePayment(String id, {String? reviewNote}) async {
     try {
-      await _dio.patch('${ApiConstants.payments}/$id/approve', data: {
-        if (reviewNote != null) 'reviewNote': reviewNote,
-      });
+      await _dio.patch(
+        '${ApiConstants.payments}/$id/approve',
+        data: {if (reviewNote != null) 'reviewNote': reviewNote},
+      );
     } on DioException catch (e) {
       debugPrint('=== approvePayment ERROR ===');
       debugPrint('Status: ${e.response?.statusCode}');
@@ -89,9 +108,10 @@ class AdminRepository {
 
   Future<void> rejectPayment(String id, {String? reviewNote}) async {
     try {
-      await _dio.patch('${ApiConstants.payments}/$id/reject', data: {
-        if (reviewNote != null) 'reviewNote': reviewNote,
-      });
+      await _dio.patch(
+        '${ApiConstants.payments}/$id/reject',
+        data: {if (reviewNote != null) 'reviewNote': reviewNote},
+      );
     } on DioException catch (e) {
       debugPrint('=== rejectPayment ERROR ===');
       debugPrint('Status: ${e.response?.statusCode}');
@@ -119,11 +139,10 @@ class AdminRepository {
     required String body,
     required String category,
   }) async {
-    final response = await _dio.post('/admin/notifications/push', data: {
-      'title': title,
-      'body': body,
-      'category': category,
-    });
+    final response = await _dio.post(
+      '/admin/notifications/push',
+      data: {'title': title, 'body': body, 'category': category},
+    );
     return response.data;
   }
 }

@@ -24,7 +24,12 @@ class PaymentHistoryScreen extends ConsumerWidget {
                 data: (payments) {
                   try {
                     if (payments.isEmpty) {
-                      return Center(child: Text(context.translate('no_payments_yet') ?? 'No payment history found.'));
+                      return Center(
+                        child: Text(
+                          context.translate('no_payments_yet') ??
+                              'No payment history found.',
+                        ),
+                      );
                     }
                     return ListView.separated(
                       itemCount: payments.length,
@@ -34,31 +39,66 @@ class PaymentHistoryScreen extends ConsumerWidget {
                           final payment = payments[index];
                           return ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: _getStatusColor(payment.status).withOpacity(0.1),
-                              child: Icon(_getStatusIcon(payment.status), color: _getStatusColor(payment.status)),
+                              backgroundColor: _getStatusColor(
+                                payment.status,
+                              ).withOpacity(0.1),
+                              child: Icon(
+                                _getStatusIcon(payment.status),
+                                color: _getStatusColor(payment.status),
+                              ),
                             ),
-                            title: Text('${payment.amount} ${context.translate('egp')}'),
+                            title: Text(
+                              '${payment.amount} ${context.translate('egp')}',
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(payment.property?.title ?? context.translate('property')),
+                                Text(
+                                  payment.property?.title ??
+                                      context.translate('property'),
+                                ),
                                 Text(
                                   payment.property?.listingType == 'Featured'
-                                      ? (context.translate('featured_listing') ?? 'Featured')
-                                      : (context.translate('standard_listing') ?? 'Normal'),
-                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                      ? (context.translate(
+                                              'featured_listing',
+                                            ) ??
+                                            'Featured')
+                                      : (context.translate(
+                                              'standard_listing',
+                                            ) ??
+                                            'Normal'),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 if (payment.isRenewal)
-                                  Text(context.translate('renewal_payment') ?? 'Renewal',
-                                      style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                                  Text(
+                                    context.translate('renewal_payment') ??
+                                        'Renewal',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
                                 if (payment.createdAt != null)
-                                  Text(intl.DateFormat('MMM dd, yyyy - hh:mm a', 'en_US').format(payment.createdAt!)),
+                                  Text(
+                                    intl.DateFormat(
+                                      'MMM dd, yyyy - hh:mm a',
+                                      'en_US',
+                                    ).format(payment.createdAt!),
+                                  ),
                               ],
                             ),
                             trailing: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(payment.status).withOpacity(0.1),
+                                color: _getStatusColor(
+                                  payment.status,
+                                ).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -72,10 +112,14 @@ class PaymentHistoryScreen extends ConsumerWidget {
                             ),
                           );
                         } catch (e, stack) {
-                          debugPrint('=== ERROR IN itemBuilder at index $index ===');
+                          debugPrint(
+                            '=== ERROR IN itemBuilder at index $index ===',
+                          );
                           debugPrint('Error: $e');
                           debugPrint('Stack: $stack');
-                          return ListTile(title: Text('Error rendering item $index: $e'));
+                          return ListTile(
+                            title: Text('Error rendering item $index: $e'),
+                          );
                         }
                       },
                     );

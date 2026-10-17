@@ -13,13 +13,16 @@ import 'package:sakan_app/shared/widgets/mode_toggle_appbar.dart';
 import 'package:sakan_app/shared/widgets/guest_prompt_card.dart';
 import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dart';
 
-final myPropertiesFutureProvider = FutureProvider.autoDispose<List<Property>>((ref) async {
+final myPropertiesFutureProvider = FutureProvider.autoDispose<List<Property>>((
+  ref,
+) async {
   return ref.read(propertyRepositoryProvider).getMyProperties();
 });
 
-final myPropertyStatsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  return ref.read(propertyRepositoryProvider).getMyPropertyStats();
-});
+final myPropertyStatsProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+      return ref.read(propertyRepositoryProvider).getMyPropertyStats();
+    });
 
 class MyListingsScreen extends ConsumerWidget {
   const MyListingsScreen({super.key});
@@ -30,14 +33,10 @@ class MyListingsScreen extends ConsumerWidget {
 
     if (authState.isGuest) {
       return Scaffold(
-        appBar: ModeToggleAppBar(
-          title: context.translate('my_listings'),
-        ),
+        appBar: ModeToggleAppBar(title: context.translate('my_listings')),
         body: const Padding(
           padding: EdgeInsets.all(24.0),
-          child: Center(
-            child: GuestPromptCard(),
-          ),
+          child: Center(child: GuestPromptCard()),
         ),
       );
     }
@@ -46,9 +45,7 @@ class MyListingsScreen extends ConsumerWidget {
     final statsAsync = ref.watch(myPropertyStatsProvider);
 
     return Scaffold(
-      appBar: ModeToggleAppBar(
-        title: context.translate('my_listings'),
-      ),
+      appBar: ModeToggleAppBar(title: context.translate('my_listings')),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(myPropertiesFutureProvider);
@@ -64,10 +61,25 @@ class MyListingsScreen extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _StatItem(label: context.translate('total'), value: stats['total'] ?? 0),
-                      _StatItem(label: context.translate('published'), value: stats['published'] ?? 0, color: Colors.green),
-                      _StatItem(label: context.translate('pending'), value: stats['pending'] ?? 0, color: Colors.orange),
-                      _StatItem(label: context.translate('rejected'), value: stats['rejected'] ?? 0, color: Colors.red),
+                      _StatItem(
+                        label: context.translate('total'),
+                        value: stats['total'] ?? 0,
+                      ),
+                      _StatItem(
+                        label: context.translate('published'),
+                        value: stats['published'] ?? 0,
+                        color: Colors.green,
+                      ),
+                      _StatItem(
+                        label: context.translate('pending'),
+                        value: stats['pending'] ?? 0,
+                        color: Colors.orange,
+                      ),
+                      _StatItem(
+                        label: context.translate('rejected'),
+                        value: stats['rejected'] ?? 0,
+                        color: Colors.red,
+                      ),
                     ],
                   ),
                 ),
@@ -82,7 +94,11 @@ class MyListingsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(vertical: 60),
                         child: Column(
                           children: [
-                            const Icon(Icons.list_alt, size: 64, color: Colors.grey),
+                            const Icon(
+                              Icons.list_alt,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(height: 16),
                             Text(context.translate('no_listings_yet')),
                           ],
@@ -97,17 +113,33 @@ class MyListingsScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final property = properties[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         child: ListTile(
                           leading: property.images.isNotEmpty
-                              ? Image.network(property.images[0], width: 60, height: 60, fit: BoxFit.cover)
-                              : Container(width: 60, height: 60, color: Colors.grey[300]),
+                              ? Image.network(
+                                  property.images[0],
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  width: 60,
+                                  height: 60,
+                                  color: Colors.grey[300],
+                                ),
                           title: Text(property.title),
                           subtitle: Text(
                             '${AppFormatters.formatCurrency(property.price)} ${context.translate('egp')} • ${context.translate(property.status.toLowerCase()) ?? property.status}',
                             style: TextStyle(
-                              color: property.status == 'PendingPayment' ? Colors.red : null,
-                              fontWeight: property.status == 'PendingPayment' ? FontWeight.bold : null,
+                              color: property.status == 'PendingPayment'
+                                  ? Colors.red
+                                  : null,
+                              fontWeight: property.status == 'PendingPayment'
+                                  ? FontWeight.bold
+                                  : null,
                             ),
                           ),
                           onTap: () => Navigator.push(
@@ -130,31 +162,52 @@ class MyListingsScreen extends ConsumerWidget {
                                       MaterialPageRoute(
                                         builder: (context) => PaymentScreen(
                                           property: property,
-                                          isFeatured: property.listingType == 'Featured',
+                                          isFeatured:
+                                              property.listingType ==
+                                              'Featured',
                                         ),
                                       ),
                                     ).then((_) {
-                                      ref.invalidate(myPropertiesFutureProvider);
+                                      ref.invalidate(
+                                        myPropertiesFutureProvider,
+                                      );
                                       ref.invalidate(myPropertyStatsProvider);
                                     });
                                   },
-                                  icon: const Icon(Icons.payment, size: 18, color: Colors.red),
+                                  icon: const Icon(
+                                    Icons.payment,
+                                    size: 18,
+                                    color: Colors.red,
+                                  ),
                                   label: Text(
-                                    context.translate('complete_payment') ?? 'Complete Payment',
-                                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    context.translate('complete_payment') ??
+                                        'Complete Payment',
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               PopupMenuButton(
                                 itemBuilder: (context) => [
-                                  PopupMenuItem(value: 'edit', child: Text(context.translate('edit'))),
-                                  PopupMenuItem(value: 'delete', child: Text(context.translate('delete'))),
+                                  PopupMenuItem(
+                                    value: 'edit',
+                                    child: Text(context.translate('edit')),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'delete',
+                                    child: Text(context.translate('delete')),
+                                  ),
                                 ],
                                 onSelected: (val) async {
                                   if (val == 'edit') {
                                     await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => CreateListingScreen(existingProperty: property),
+                                        builder: (context) =>
+                                            CreateListingScreen(
+                                              existingProperty: property,
+                                            ),
                                       ),
                                     );
                                     ref.invalidate(myPropertiesFutureProvider);
@@ -163,23 +216,54 @@ class MyListingsScreen extends ConsumerWidget {
                                     final confirmed = await showDialog<bool>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: Text(context.translate('delete_listing')),
-                                        content: Text(context.translate('delete_confirmation')),
+                                        title: Text(
+                                          context.translate('delete_listing'),
+                                        ),
+                                        content: Text(
+                                          context.translate(
+                                            'delete_confirmation',
+                                          ),
+                                        ),
                                         actions: [
-                                          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.translate('cancel'))),
-                                          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.translate('delete'), style: const TextStyle(color: Colors.red))),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, false),
+                                            child: Text(
+                                              context.translate('cancel'),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, true),
+                                            child: Text(
+                                              context.translate('delete'),
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     );
 
                                     if (confirmed == true) {
                                       try {
-                                        await ref.read(propertyRepositoryProvider).deleteProperty(property.id!);
-                                        ref.invalidate(myPropertiesFutureProvider);
+                                        await ref
+                                            .read(propertyRepositoryProvider)
+                                            .deleteProperty(property.id!);
+                                        ref.invalidate(
+                                          myPropertiesFutureProvider,
+                                        );
                                         ref.invalidate(myPropertyStatsProvider);
                                       } catch (e) {
                                         if (context.mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Error: $e'),
+                                            ),
+                                          );
                                         }
                                       }
                                     }
@@ -204,7 +288,9 @@ class MyListingsScreen extends ConsumerWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateListingScreen()),
+            MaterialPageRoute(
+              builder: (context) => const CreateListingScreen(),
+            ),
           );
         },
         label: Text(context.translate('add_listing')),

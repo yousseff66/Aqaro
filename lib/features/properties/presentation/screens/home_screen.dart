@@ -18,12 +18,20 @@ import 'package:sakan_app/features/auth/presentation/providers/auth_provider.dar
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  Widget _buildFilterButton(BuildContext context, WidgetRef ref, String? value, String label, bool isSelected) {
+  Widget _buildFilterButton(
+    BuildContext context,
+    WidgetRef ref,
+    String? value,
+    String label,
+    bool isSelected,
+  ) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
           ref.read(homePurposeFilterProvider.notifier).state = value;
-          ref.read(propertyListProvider.notifier).fetchProperties(refresh: true, listingPurpose: value);
+          ref
+              .read(propertyListProvider.notifier)
+              .fetchProperties(refresh: true, listingPurpose: value);
           // Explicitly invalidate featured properties to ensure they sync with the new filter
           ref.invalidate(featuredPropertiesProvider);
         },
@@ -32,17 +40,21 @@ class HomeScreen extends ConsumerWidget {
           curve: Curves.easeInOut,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
-            boxShadow: isSelected 
-              ? [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  )
-                ] 
-              : [],
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
           ),
           child: Text(
             label,
@@ -71,7 +83,10 @@ class HomeScreen extends ConsumerWidget {
           Consumer(
             builder: (context, ref, _) {
               final unreadAsync = ref.watch(unreadCountProvider);
-              final count = unreadAsync.maybeWhen(data: (c) => c, orElse: () => 0);
+              final count = unreadAsync.maybeWhen(
+                data: (c) => c,
+                orElse: () => 0,
+              );
               return Stack(
                 children: [
                   IconButton(
@@ -79,7 +94,9 @@ class HomeScreen extends ConsumerWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
                       );
                     },
                   ),
@@ -89,11 +106,20 @@ class HomeScreen extends ConsumerWidget {
                       top: 8,
                       child: Container(
                         padding: const EdgeInsets.all(2),
-                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         child: Text(
                           count > 9 ? '9+' : count.toString(),
-                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -106,7 +132,9 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await ref.read(propertyListProvider.notifier).fetchProperties(
+          await ref
+              .read(propertyListProvider.notifier)
+              .fetchProperties(
                 refresh: true,
                 listingPurpose: ref.read(homePurposeFilterProvider),
               );
@@ -125,9 +153,27 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    _buildFilterButton(context, ref, null, context.translate('all') ?? 'All', purposeFilter == null),
-                    _buildFilterButton(context, ref, 'Rent', context.translate('for_rent') ?? 'For Rent', purposeFilter == 'Rent'),
-                    _buildFilterButton(context, ref, 'Sale', context.translate('for_sale') ?? 'For Sale', purposeFilter == 'Sale'),
+                    _buildFilterButton(
+                      context,
+                      ref,
+                      null,
+                      context.translate('all') ?? 'All',
+                      purposeFilter == null,
+                    ),
+                    _buildFilterButton(
+                      context,
+                      ref,
+                      'Rent',
+                      context.translate('for_rent') ?? 'For Rent',
+                      purposeFilter == 'Rent',
+                    ),
+                    _buildFilterButton(
+                      context,
+                      ref,
+                      'Sale',
+                      context.translate('for_sale') ?? 'For Sale',
+                      purposeFilter == 'Sale',
+                    ),
                   ],
                 ),
               ),
@@ -146,9 +192,17 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Text(
                             context.translate('featured_properties'),
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
                           ),
-                          Icon(Icons.auto_awesome, color: Theme.of(context).colorScheme.primary, size: 20),
+                          Icon(
+                            Icons.auto_awesome,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 20,
+                          ),
                         ],
                       ),
                     ),
@@ -168,13 +222,18 @@ class HomeScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 context.translate('latest_listings'),
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             propertiesAsync.when(
               data: (properties) {
                 if (properties.isEmpty) {
-                  return Center(child: Text(context.translate('no_properties_found')));
+                  return Center(
+                    child: Text(context.translate('no_properties_found')),
+                  );
                 }
                 return Column(
                   children: [
@@ -189,7 +248,9 @@ class HomeScreen extends ConsumerWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PropertyDetailScreen(propertyId: property.id!),
+                              builder: (context) => PropertyDetailScreen(
+                                propertyId: property.id!,
+                              ),
                             ),
                           ),
                         );
@@ -199,7 +260,9 @@ class HomeScreen extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: TextButton(
-                          onPressed: () => ref.read(propertyListProvider.notifier).loadMore(),
+                          onPressed: () => ref
+                              .read(propertyListProvider.notifier)
+                              .loadMore(),
                           child: Text(context.translate('load_more')),
                         ),
                       ),
@@ -221,7 +284,9 @@ class HomeScreen extends ConsumerWidget {
           }
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateListingScreen()),
+            MaterialPageRoute(
+              builder: (context) => const CreateListingScreen(),
+            ),
           );
         },
         label: Text(context.translate('add_listing')),
@@ -295,7 +360,7 @@ class _FeaturedSliderState extends State<FeaturedSlider> {
                     value = index.toDouble() - (_pageController.page ?? 0);
                     value = (value * 0.05).clamp(-1.0, 1.0);
                   }
-                  
+
                   // تأثير الـ Scale والـ Rotation الخفيف للمودرن ديزاين
                   return Transform.scale(
                     scale: 1.0 - (value.abs() * 0.8),
@@ -312,7 +377,9 @@ class _FeaturedSliderState extends State<FeaturedSlider> {
                     boxShadow: [
                       if (_currentPage == index)
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.15),
                           blurRadius: 20,
                           spreadRadius: -5,
                           offset: const Offset(0, 10),
@@ -347,16 +414,20 @@ class _FeaturedSliderState extends State<FeaturedSlider> {
               height: 6,
               width: _currentPage == index ? 24 : 8,
               decoration: BoxDecoration(
-                color: _currentPage == index 
-                    ? Theme.of(context).colorScheme.primary 
+                color: _currentPage == index
+                    ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.primary.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: _currentPage == index ? [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
-                    blurRadius: 4,
-                  )
-                ] : [],
+                boxShadow: _currentPage == index
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.4),
+                          blurRadius: 4,
+                        ),
+                      ]
+                    : [],
               ),
             ),
           ),

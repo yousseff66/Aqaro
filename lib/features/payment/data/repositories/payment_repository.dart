@@ -6,7 +6,9 @@ import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/payment/data/models/payment_model.dart';
 import 'package:sakan_app/features/admin/data/models/settings_model.dart';
 
-final paymentRepositoryProvider = Provider((ref) => PaymentRepository(ref.read(dioProvider)));
+final paymentRepositoryProvider = Provider(
+  (ref) => PaymentRepository(ref.read(dioProvider)),
+);
 
 class PaymentRepository {
   final Dio _dio;
@@ -62,6 +64,9 @@ class PaymentRepository {
   }
 
   Future<void> verifyPayment(String transactionId) async {
-    await _dio.post('${ApiConstants.payments}/verify', data: {'transactionId': transactionId});
+    await _dio.post(
+      '${ApiConstants.payments}/verify',
+      data: {'transactionId': transactionId},
+    );
   }
 }

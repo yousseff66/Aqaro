@@ -27,12 +27,19 @@ class GuestPromptCard extends StatelessWidget {
                     color: Colors.green.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.account_circle_outlined, size: 48, color: Colors.green),
+                  child: const Icon(
+                    Icons.account_circle_outlined,
+                    size: 48,
+                    color: Colors.green,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   context.translate('guest_login_prompt'),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -40,7 +47,9 @@ class GuestPromptCard extends StatelessWidget {
                   context.translate('login_to_access_features'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withOpacity(0.7),
                     height: 1.5,
                   ),
                 ),
@@ -55,7 +64,9 @@ class GuestPromptCard extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: Text(context.translate('login')),
                   ),

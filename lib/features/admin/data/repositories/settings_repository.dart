@@ -4,7 +4,9 @@ import 'package:sakan_app/core/api/dio_client.dart';
 import 'package:sakan_app/core/constants/api_constants.dart';
 import 'package:sakan_app/features/admin/data/models/settings_model.dart';
 
-final settingsRepositoryProvider = Provider((ref) => SettingsRepository(ref.read(dioProvider)));
+final settingsRepositoryProvider = Provider(
+  (ref) => SettingsRepository(ref.read(dioProvider)),
+);
 
 class SettingsRepository {
   final Dio _dio;

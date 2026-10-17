@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/features/reports/data/repositories/report_repository.dart';
 
-final reportProvider = StateNotifierProvider.autoDispose<ReportNotifier, AsyncValue<void>>((ref) {
-  return ReportNotifier(ref.watch(reportRepositoryProvider));
-});
+final reportProvider =
+    StateNotifierProvider.autoDispose<ReportNotifier, AsyncValue<void>>((ref) {
+      return ReportNotifier(ref.watch(reportRepositoryProvider));
+    });
 
 class ReportNotifier extends StateNotifier<AsyncValue<void>> {
   final ReportRepository _repository;
@@ -17,10 +18,7 @@ class ReportNotifier extends StateNotifier<AsyncValue<void>> {
   }) async {
     state = const AsyncValue.loading();
     try {
-      final data = {
-        'propertyId': propertyId,
-        'reason': reason,
-      };
+      final data = {'propertyId': propertyId, 'reason': reason};
       if (description.isNotEmpty) {
         data['description'] = description;
       }

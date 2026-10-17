@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sakan_app/features/notifications/data/models/notification_model.dart';
 import 'package:sakan_app/features/notifications/data/repositories/notification_repository.dart';
 
-final myNotificationsProvider = FutureProvider.autoDispose<List<AppNotification>>((ref) async {
-  return ref.read(notificationRepositoryProvider).getMyNotifications();
-});
+final myNotificationsProvider =
+    FutureProvider.autoDispose<List<AppNotification>>((ref) async {
+      return ref.read(notificationRepositoryProvider).getMyNotifications();
+    });
 
 final unreadCountProvider = FutureProvider.autoDispose<int>((ref) async {
   return ref.read(notificationRepositoryProvider).getUnreadCount();
@@ -14,7 +15,8 @@ class NotificationActionsNotifier extends StateNotifier<AsyncValue<void>> {
   final NotificationRepository _repository;
   final Ref _ref;
 
-  NotificationActionsNotifier(this._repository, this._ref) : super(const AsyncValue.data(null));
+  NotificationActionsNotifier(this._repository, this._ref)
+    : super(const AsyncValue.data(null));
 
   void _refreshAll() {
     _ref.invalidate(myNotificationsProvider);
@@ -52,6 +54,12 @@ class NotificationActionsNotifier extends StateNotifier<AsyncValue<void>> {
 }
 
 final notificationActionsProvider =
-StateNotifierProvider.autoDispose<NotificationActionsNotifier, AsyncValue<void>>((ref) {
-  return NotificationActionsNotifier(ref.read(notificationRepositoryProvider), ref);
-});
+    StateNotifierProvider.autoDispose<
+      NotificationActionsNotifier,
+      AsyncValue<void>
+    >((ref) {
+      return NotificationActionsNotifier(
+        ref.read(notificationRepositoryProvider),
+        ref,
+      );
+    });

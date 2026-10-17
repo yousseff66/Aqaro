@@ -27,6 +27,7 @@ class PaymentNotifier extends StateNotifier<AsyncValue<Payment?>> {
   }
 }
 
-final paymentProcessProvider = StateNotifierProvider<PaymentNotifier, AsyncValue<Payment?>>((ref) {
-  return PaymentNotifier(ref.read(paymentRepositoryProvider));
-});
+final paymentProcessProvider =
+    StateNotifierProvider<PaymentNotifier, AsyncValue<Payment?>>((ref) {
+      return PaymentNotifier(ref.read(paymentRepositoryProvider));
+    });

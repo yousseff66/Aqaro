@@ -72,10 +72,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
         _ref.read(pushNotificationServiceProvider).initialize();
       } catch (e) {
         await _ref.read(storageServiceProvider).removeToken();
-        state = state.copyWith(isLoading: false, isAuthenticated: false, user: null);
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: false,
+          user: null,
+        );
       }
     } else {
-      state = state.copyWith(isLoading: false, isAuthenticated: false, user: null);
+      state = state.copyWith(
+        isLoading: false,
+        isAuthenticated: false,
+        user: null,
+      );
     }
   }
 
@@ -108,12 +116,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     _ref.read(pushNotificationServiceProvider).initialize();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String phone, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _ref.read(dioProvider).post(
+      final response = await _ref
+          .read(dioProvider)
+          .post(
             ApiConstants.login,
-            data: {'email': email, 'password': password},
+            data: {'phone': phone, 'password': password},
           );
 
       await _handleAuthResponse(response.data);
@@ -130,16 +140,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> register(String name, String email, String password, String phone) async {
+  Future<void> register(
+    String name,
+    String password,
+    String phone,
+    String firebaseIdToken,
+  ) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _ref.read(dioProvider).post(
+      final response = await _ref
+          .read(dioProvider)
+          .post(
             ApiConstants.register,
             data: {
               'name': name,
-              'email': email,
               'password': password,
               'phone': phone,
+              'firebaseIdToken': firebaseIdToken,
             },
           );
 
@@ -166,7 +183,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     // 3. محاولة مسح التوكن من السيرفر في الخلفية
     try {
-      _ref.read(pushNotificationServiceProvider).unregisterDevice().catchError((e) {
+      _ref.read(pushNotificationServiceProvider).unregisterDevice().catchError((
+        e,
+      ) {
         debugPrint('Logout background unregister failed: $e');
       });
     } catch (e) {
@@ -174,39 +193,60 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<bool> forgotPassword(String email) async {
-    try {
-      await _ref.read(dioProvider).post(ApiConstants.forgotPassword, data: {'email': email});
-      return true;
-    } catch (e) {
-      return false;
-    }
+  Future<bool> forgotPassword(String phone) async {
+    // We can keep this if needed, but with Firebase Phone Auth,
+    // we don't strictly need a backend request to initiate the forgot password.
+    // The OTP is sent from the client.
+    return true;
   }
 
-  Future<Map<String, dynamic>> resetPassword(String email, String code, String newPassword) async {
+  Future<Map<String, dynamic>> resetPasswordByPhone(
+    String phone,
+    String firebaseIdToken,
+    String newPassword,
+  ) async {
     try {
-      await _ref.read(dioProvider).post(ApiConstants.resetPassword, data: {
-        'email': email,
-        'code': code,
-        'newPassword': newPassword,
-      });
+      await _ref
+          .read(dioProvider)
+          .post(
+            ApiConstants.resetPasswordByPhone,
+            data: {
+              'phone': phone,
+              'firebaseIdToken': firebaseIdToken,
+              'newPassword': newPassword,
+            },
+          );
       return {'success': true};
     } on DioException catch (e) {
-      return {'success': false, 'message': e.response?.data['message'] ?? 'Failed to reset password'};
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Failed to reset password',
+      };
     } catch (e) {
       return {'success': false, 'message': 'An unexpected error occurred'};
     }
   }
 
-  Future<Map<String, dynamic>> changePhone(String newPhone) async {
+  Future<Map<String, dynamic>> changePhone(
+    String newPhone,
+    String firebaseIdToken,
+  ) async {
     try {
-      final response = await _ref.read(dioProvider).patch(ApiConstants.updatePhone, data: {'phone': newPhone});
+      final response = await _ref
+          .read(dioProvider)
+          .patch(
+            ApiConstants.updatePhone,
+            data: {'phone': newPhone, 'firebaseIdToken': firebaseIdToken},
+          );
       // Update local user data after success
       final updatedUser = User.fromJson(response.data);
       state = state.copyWith(user: updatedUser);
       return {'success': true};
     } on DioException catch (e) {
-      return {'success': false, 'message': e.response?.data['message'] ?? 'Failed to update phone'};
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Failed to update phone',
+      };
     } catch (e) {
       return {'success': false, 'message': 'An unexpected error occurred'};
     }
@@ -224,15 +264,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       // 2. Call delete account API
       await _ref.read(dioProvider).delete(ApiConstants.deleteAccount);
-      
+
       // 3. Clear local session
       await _ref.read(storageServiceProvider).removeToken();
       state = AuthState(isAuthenticated: false, user: null, isLoading: false);
-      
+
       return {'success': true};
     } on DioException catch (e) {
       state = state.copyWith(isLoading: false);
-      return {'success': false, 'message': e.response?.data['message'] ?? 'Failed to delete account'};
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Failed to delete account',
+      };
     } catch (e) {
       state = state.copyWith(isLoading: false);
       return {'success': false, 'message': 'An unexpected error occurred'};
